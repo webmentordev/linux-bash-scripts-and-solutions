@@ -1,0 +1,178 @@
+#<VirtualHost *:80>
+     #DocumentRoot "C:/xampp2/htdocs"
+     #ServerName site.test
+     #ServerAlias *.site.test
+#</VirtualHost>
+#<VirtualHost *:443>
+     #DocumentRoot "C:/xampp2/htdocs"
+     #ServerName brourls.online
+     #ServerAlias *.brourls.online
+     #SSLEngine on
+     #SSLCertificateFile "crt/brourls.online/server.crt"
+     #SSLCertificateKeyFile "crt/brourls.online/server.key"
+#</VirtualHost>
+<VirtualHost 192.168.100.150:80>
+ 	DocumentRoot "C:\xampp2\htdocs\ilobber.online"
+ 	ServerName farhan.cw
+ 	<Directory "C:\xampp2\htdocs">
+ 	</Directory>
+</VirtualHost>
+
+
+
+
+
+ <VirtualHost 192.168.100.150:80>
+ 	DocumentRoot "C:\xampp2\htdocs\ilobber.online"
+ 	ServerName farhan.cw
+ 	<Directory "C:\xampp2\htdocs">
+ 	</Directory>
+ </VirtualHost>
+
+ <VirtualHost 192.168.100.150:443>
+     DocumentRoot "C:\xampp2\htdocs\ilobber.online"
+     ServerName www.myurl.com
+     SSLEngine on
+     SSLCertificateFile "C:\xampp2\apache\crt\ilobber.online\server.crt" 
+     SSLCertificateKeyFile "C:\xampp2\apache\crt\ilobber.online\server.key"
+     <Directory "C:/xampp2/htdocs/ilobber.online">
+         Options All
+         AllowOverride All
+         Require all granted
+     </Directory>
+</VirtualHost>
+
+
+
+
+<VirtualHost *:80>
+     DocumentRoot "D:\Web Development\AhmerPortfolio"
+     ServerName site.test
+     ServerAlias *.site.test
+     <Directory "D:\Web Development\AhmerPortfolio">
+         Options All
+         AllowOverride All
+         Require all granted
+     </Directory>
+</VirtualHost>
+<VirtualHost *:443>
+     DocumentRoot "D:\Web Development\AhmerPortfolio"
+     ServerName brourls.online
+     ServerAlias *.brourls.online
+     SSLEngine on
+     SSLCertificateFile "crt/brourls.online/server.crt"
+     SSLCertificateKeyFile "crt/brourls.online/server.key"
+     <Directory "D:\Web Development\AhmerPortfolio">
+         Options All
+         AllowOverride All
+         Require all granted
+     </Directory>
+</VirtualHost>
+
+
+
+
+<VirtualHost *:80>
+     DocumentRoot "D:\Web Development\AhmerPortfolio"
+     <Directory "D:\Web Development\AhmerPortfolio">
+         Options All
+         AllowOverride All
+         Require all granted
+     </Directory>
+</VirtualHost>
+
+<VirtualHost *:443>
+     DocumentRoot "D:\Web Development\AhmerPortfolio"
+     <Directory "D:\Web Development\AhmerPortfolio">
+         Options All
+         AllowOverride All
+         Require all granted
+     </Directory>
+</VirtualHost>
+
+
+
+
+
+<VirtualHost *:80>
+    DocumentRoot "C:\xampp\htdocs\webmentor"
+	<Directory "C:\xampp\htdocs\webmentor">
+		Options All
+		AllowOverride All
+		Require all granted
+	</Directory>
+</VirtualHost>
+
+
+
+
+
+
+<VirtualHost *:443>
+    	DocumentRoot "C:\xampp\mywebsites\webmentor"
+	SSLEngine on
+	SSLCertificateFile "C:\xampp\apache\crt\webmentor"
+	SSLCertificateKeyFile "C:\xampp\apache\crt\webmentor"
+</VirtualHost>
+
+<VirtualHost *:444>
+    	DocumentRoot "C:\xampp\mywebsites\webmentor1"
+	SSLEngine on
+	SSLCertificateFile "C:\xampp\apache\crt\webmentor1"
+	SSLCertificateKeyFile "C:\xampp\apache\crt\webmentor1"
+</VirtualHost>
+
+<VirtualHost *:445>
+    	DocumentRoot "C:\xampp\mywebsites\webmentor2"
+	SSLEngine on
+	SSLCertificateFile "C:\xampp\apache\crt\webmentor2"
+	SSLCertificateKeyFile "C:\xampp\apache\crt\webmentor2"
+</VirtualHost>
+
+
+
+<VirtualHost *:444>
+    	DocumentRoot "C:\xampp\mywebsites\webmentor"
+	ServerName website1.test
+	SSLEngine on
+	SSLCertificateFile "C:\xampp\apache\crt\webmentor"
+	SSLCertificateKeyFile "C:\xampp\apache\crt\webmentor"
+</VirtualHost>
+
+<VirtualHost *:4000>
+     DocumentRoot "C:\xampp\mywebsites\webmentor"
+     ServerName webmentor.test
+     ServerAlias *.webmentor.test
+     SSLEngine on
+     SSLCertificateFile "crt\webmentor.test\server.crt"
+     SSLCertificateKeyFile "crt\webmentor.test\server.key"
+ </VirtualHost>
+
+
+
+<VirtualHost *:443>
+     DocumentRoot "C:\xampp\mywebsites\webmentor"
+     ServerName webmentor.test
+     ServerAlias *.webmentor.test
+     SSLEngine on
+     SSLCertificateFile "C:\xampp\apache\crt\webmentor.test\server.crt"
+     SSLCertificateKeyFile "C:\xampp\apache\crt\webmentor.test\server.key"
+</VirtualHost>
+
+<VirtualHost *:4404>
+     DocumentRoot "C:\xampp\mywebsites\webmentor1"
+     ServerName webmentor.test
+     ServerAlias *.webmentor.test
+     SSLEngine on
+     SSLCertificateFile "C:\xampp\apache\crt\webmentor.test\server.crt"
+     SSLCertificateKeyFile "C:\xampp\apache\crt\webmentor.test\server.key"
+</VirtualHost>
+
+<VirtualHost *:4405>
+     DocumentRoot "C:\xampp\mywebsites\webmentor2"
+     ServerName webmentor.test
+     ServerAlias *.webmentor.test
+     SSLEngine on
+     SSLCertificateFile "C:\xampp\apache\crt\webmentor.test\server.crt"
+     SSLCertificateKeyFile "C:\xampp\apache\crt\webmentor.test\server.key"
+</VirtualHost>

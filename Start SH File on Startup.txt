@@ -1,0 +1,5 @@
+$ sudo update-rc.d /etc/init.d/nameofscript.sh defaults
+$ chmod +x /etc/init.d/nameofscript.sh
+==================================================================
+#crontab -e
+@reboot  /home/user/test.sh

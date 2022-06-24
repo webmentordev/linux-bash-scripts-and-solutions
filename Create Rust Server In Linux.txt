@@ -1,0 +1,54 @@
+- First Run Following Command
+sudo apt-get install lib32gcc1
+
+2-Make Directroy in Downloads to install SteamCMD & Create Server in same Folder.
+cd ~/Downloads && mkdir ~/SteamCMD && cd ~/SteamCMD && mkdir ~/rustserver
+
+3-Download SteamCMD for Linux (download curl with "sudo apt install curl" if curl doesn't work)
+curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
+
+4-Download tool for Easy Server Management
+sudo apt-get install tmux screen -y;
+
+5-Run Steamcmd (make sure you are in SteamCMD Directory that you created in setp 2)
+./steamcmd.sh
+
+6-To install Rust Server. Run There commands One by One
+force_install_dir /home/*your-username*/Downloads/SteamCMD/rustserver/
+login anonymous
+app_update 258550    (this command will start downloading Rust Dedicated Server in rustserver directory)
+
+7- Create Your Own Script File in server and copy paste following Code
+touch startrust.sh
+
+
+8- Step 7 will create a file then open that startrust.sh file in nodepad
+copy paste following code in file without these long lines
+
+=====================================================================
+#!/bin/sh
+clear while : do
+  exec ./RustDedicated -batchmode -nographics \
+  -server.ip IPAddressHere \
+  -server.port 28015 \
+  -rcon.ip IPAddressHere \
+  -rcon.port 28016 \
+  -rcon.password "rcon password here" \
+  -server.maxplayers 75 \
+  -server.hostname "Server Name" \
+  -server.identity "my_server_identity" \
+  -server.level "Procedural Map" \
+  -server.seed 12345 \
+  -server.worldsize 3000 \
+  -server.saveinterval 300 \-server.globalchat true \
+  -server.description "Description Here" \
+  -server.headerimage "512x256px JPG/PNG headerimage link here" \
+  -server.url "Website Here"
+  echo "\nRestarting server...\n" done
+=====================================================================
+
+9- Now change permissions for the file to
+chmod +x startrust.sh
+
+8- Now Run your server
+export 'TERM=roxterm' && ./startrust.sh

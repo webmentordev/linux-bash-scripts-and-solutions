@@ -1,0 +1,7 @@
+$ sudo apt install php
+$ sudo apt install php libapache2-mod-php (To use Apache with PHP)
+$ sudo apt install php-cgi (run PHP scripts in terminal)
+$ sudo apt install php-mysql (To use MySQL with PHP)
+$ sudo apt install php-pgsql (To use PostgreSQL with PHP)
+
+7.4.3

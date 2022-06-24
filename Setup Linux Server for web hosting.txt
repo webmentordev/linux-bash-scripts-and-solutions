@@ -1,0 +1,28 @@
+PopOS ----- 192.168.152.131 --- Port-22
+Ubuntu ---- 192.168.152.128 --- Port-22
+Debian ---- 192.168.152.134 --- Port-22
+=================================================================
+==============Create FTP & Access it from Windows================
+=================================================================
+* sudo ufw enable
+* sudo ufw allow 22
+* ifconfig
+* sudo apt install net-tools
+* ifconfig (to copy Local IP Address)
+* sudo apt install openssh-server
+* Download & Install Bitvise SSH Client on Windows to Access
+* User Ubuntu username & Password / Uncheck Enable PAssword over kbdi fallback
+===================================================================
+=======Create Server, Access from Internet & Deploy Website========
+===================================================================
+* sudo apt-get install apache2
+* /etc/apache2 (to find where apache has installed)
+* sudo /etc/init.d/apache2 status (check apache server status)
+* localhost or 127.0.0.1 (open Website on Local Machine)
+* /var/www/ (to find Default Website Website)
+* sudo nautilus (open folder as admin and copy paste files)
+* sudo ufw allow 'Apache Full' (Access Apache from Windows)
+* Try to access website from windows
+* open CMD in windows & type ipconfig /all (and Copy IPv4 from There!)
+* Open Modem Setting & Port Forward.
+* Then access it from internet.

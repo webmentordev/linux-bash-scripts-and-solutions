@@ -1,0 +1,9 @@
+$ sudo apt install xrdp 
+$ sudo systemctl status xrdp
+$ sudo adduser xrdp ssl-cert
+$ sudo systemctl restart xrdp
+$ sudo ufw allow 3389
+
+Open :Remote Desktop Connection: in windows
+then login with your Local IP which you can find with
+$ ifconfig

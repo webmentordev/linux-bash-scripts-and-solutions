@@ -1,0 +1,40 @@
+1- Introduction
+2- What are Virtual Machines
+3- Distros
+4- Desktop Environment
+5- Downloading Ubuntu
+6- Download and Install VM
+7- Bootable Flash Drive
+8- Installing Ubuntu
+9- Installing Kali Linux
+10- Install Windows 10
+11- Settingup Ubuntu
+12- Using Command Line
+13- Linux File System
+14- Basic Linux Commands
+15- Directory Commands
+16- Files Commands
+17- Zip & Unzip Files
+18- Install NodeJs
+19- Firewall Configuration
+20- Install Apache2
+21- Install PHP7.4
+22- Install PHP8.1
+23- Install MySQL
+24- Install PHPMyAdmin
+25- Install Composer
+26- Create Users
+27- Setup FTP/SFTP
+28- Restrict SFTP Access
+29- Setup RDP
+30- YouTube Video Downloader
+31- Install Steam
+32- Install rust & cargo
+33- Setup for C Language
+34- Setup Nginx
+35- Install Steam & Games
+36- Setup Static Local IP Address
+37- File / Directory Permissions
+38- 
+39- 
+40- 

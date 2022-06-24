@@ -1,0 +1,7 @@
+Download Nodejs version Binary file from nodejs.org
+
+$ sudo apt-get install nodejs
+$ sudo apt-get install xz-utils
+* Open Folder of Download File in Terminal
+$ sudo tar -xf FILENAME.tar.x
+$ sudo cp -r node-FILE-VERSION-linux-x64/{bin,include,lib,share} /usr/

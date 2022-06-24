@@ -1,0 +1,21 @@
+$ export 'TERM=xterm'
+$ sudo apt install wget -y
+$ wget https://dev.mysql.com/get/mysql-apt-config_0.8.20-1_all.deb
+$ sudo apt install ./mysql-apt-config_*_all.deb
+	Select first MySQL Server & Cluster
+	MySQL-8.0
+	Ok
+For Future Configure
+$ sudo dpkg-reconfigure mysql-apt-config
+$ sudo apt update
+$ sudo apt install mysql-server
+	Set Strong root password
+	Set Strong root password again
+	select first (RECOMMEND) option
+=====================================================================
+===================Installation will be completed====================
+=====================================================================
+Test Now
+$ mysql -u root -p
+	Enter password you set wile installation
+$ sudo systemctl enable --now mysql

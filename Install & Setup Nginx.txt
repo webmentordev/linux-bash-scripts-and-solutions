@@ -1,0 +1,14 @@
+Ifrst Make sure you don't have Apache2 Already installed or running
+===============================
+$ sudo apt update
+$ sudo apt install nginx
+$ sudo systemctl status nginx
+$ sudo ufw allow 'Nginx Full'
+$ sudo ufw enable
+$ sudo ufw status
+
+Config Files in 
+/etc/nginx
+/etc/nginx/nginx.conf
+/etc/nginx/sites-available
+/etc/nginx/sites-enabled

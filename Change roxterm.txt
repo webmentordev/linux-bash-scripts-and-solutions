@@ -1,0 +1,4 @@
+Check TERM
+
+$ echo $TERM
+$ export 'TERM=xterm'

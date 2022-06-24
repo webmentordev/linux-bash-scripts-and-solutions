@@ -1,0 +1,24 @@
+composer require livewire/livewire
+ @livewireStyles
+ @livewireScripts
+
+protected $paginationTheme = 'bootstrap';
+protected $paginationTheme = 'tailwindcss';
+
+php artisan livewire:publish --config
+php artisan livewire:publish --assets
+php artisan livewire:publish --pagination
+
+
+module.exports = {
+  content: [
+    './resources/**/*.blade.php',
+    './resources/**/*.js',
+    './resources/**/*.vue',
+    './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}

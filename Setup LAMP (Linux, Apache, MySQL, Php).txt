@@ -1,0 +1,22 @@
+https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-ubuntu-18-04
+
+$ sudo apt update
+====================================================================
+-------------------------------Install Apache2-----------------------
+
+$ sudo apt install apache2
+$ sudo ufw enable
+$ sudo ufw app list
+$ sudo ufw allow in "Apache"
+$ sudo ufw status
+$ ip addr show eth0 | grep inet | awk '{ print $2; }' | sed 's/\/.*$//' ()
+(If Above Command Doesn't work)
+$ Ifconfig
+(If above doesn't work then run command below then type $ ifconfig)
+$ sudo apt-get install net-tools
+
+Type that IP in Brower then it will show u you Ubuntu Default Page.
+========================================================================
+---------------------------------Install MySQL--------------------------
+$ sudo apt install mysql-server
+$ sudo mysql_secure_installation

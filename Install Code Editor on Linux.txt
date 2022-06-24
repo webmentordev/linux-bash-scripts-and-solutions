@@ -1,0 +1,3 @@
+$ sudo apt-get install snapd
+$ sudo snap install code --classic
+$ sudo snap install sublime-text --classic

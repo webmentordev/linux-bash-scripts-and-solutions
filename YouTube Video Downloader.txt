@@ -1,0 +1,8 @@
+$ sudo apt-get install yt-dlp
+$ sudo apt-get install python3-pip
+$ python3 -m pip install -U yt-dlp
+$ yt-dlp *url*
+=====================================
+
+$ yt-dlp https://www.youtube.com/watch?v=5Eqb_-j3FDA -o 'cokestudio.%(ext)s'
+$ yt-dlp -f 'ba' -x --audio-format mp3 https://www.youtube.com/watch?v=5Eqb_-j3FDA -o 'pasoori.%(ext)s'

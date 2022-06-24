@@ -1,0 +1,3 @@
+$ sudo update-alternatives --config php
+
+Select version with number then press enter.
