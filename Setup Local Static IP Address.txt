@@ -1,0 +1,33 @@
+Check You address with following commands
+$ ip link
+$ ip address
+$ ip a
+
+$ sudo nano /etc/network/interfaces
+
+===============================================================
+enp0s3 is Ethernet interface. Your's can be different.
+Skip Loopback network interface.
+===============================================================
+Replace the following
+
+auto enp0s3
+iface enp0s3 inet dhcp ----> to -----> iface enp0s3 inet static
+
+
+add address that you want
+add netmask must be same as following
+add gateway is your router login
+add dns-nameservers same as following
+===============================================================
+
+auto enp0s3
+iface enp0s3 inet static
+address 192.168.2.2
+netmask 255.255.255.0
+gateway 192.168.2.2
+dns-nameservers 8.8.4.4 8.8.8.8
+
+
+$ sudo systemctl restart NetworkManager.service
+(If upper command doesn't work. Reboot system)
