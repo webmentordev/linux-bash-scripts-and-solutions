@@ -1,4 +1,4 @@
-Check You address with following commands
+Check Your IP address with following commands
 $ ip link
 $ ip address
 $ ip a
