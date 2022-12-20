@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 sudo apt-get install wget php-cli php-zip unzip phpunit curl php-pear php-dev php-xml php-pdo php-common -y
 curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php

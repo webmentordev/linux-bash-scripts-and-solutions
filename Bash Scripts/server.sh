@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+
 /home/ahmerdev/files/steam/steamcmd.sh \+force_install_dir /home/ahmerdev/rust_server \+login anonymous \+app_update 258550 \+quit
 
 wget -c https://umod.org/games/rust/download/develop -O UmodUpdate.zip

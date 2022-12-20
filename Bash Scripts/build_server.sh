@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # First we will make a directory rust_server in Downloads folder then install Rust server in it
 

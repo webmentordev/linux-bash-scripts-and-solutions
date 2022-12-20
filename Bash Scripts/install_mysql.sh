@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 
 read -p "Enter Username: " USERNAME
 read -p "Enter Password: " PASSWORD

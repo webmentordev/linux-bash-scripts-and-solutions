@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #Install RDP and Configure
 sudo apt-get install xrdp -y

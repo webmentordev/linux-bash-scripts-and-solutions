@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 sudo apt-get install lib32gcc-s1
 mkdir steam

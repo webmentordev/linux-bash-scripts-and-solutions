@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #Simply Install Apache2 7 configure in firewall
 sudo apt-get install apache2 ufw net-tools -y

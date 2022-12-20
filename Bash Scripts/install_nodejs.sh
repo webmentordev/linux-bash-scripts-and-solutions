@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #Download, Install and Update NodeJS 16.15.0
 sudo apt-get install nodejs curl xz-utils tar wget -y
