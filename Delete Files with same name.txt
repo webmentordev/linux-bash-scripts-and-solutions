@@ -1,0 +1,3 @@
+First part of file shoud be same then * at the end. simple
+$ sudo rm -f ssh_host_*
+

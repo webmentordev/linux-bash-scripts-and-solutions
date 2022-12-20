@@ -1,0 +1,8 @@
+:::::::::::::::::::::::::::::BAN IP Address UFW:::::::::::::::::::::::::::::
+$ sudo ufw enable
+$ sudo ufw status
+$ sudo ufw deny from xxx.xxx.xxx.xxx to any
+$ sudo ufw status
+
+:::::::::::::::::::::::::::::BAN IP Address In IpTable:::::::::::::::::::::::::::::
+$ sudo iptables -I INPUT -s xxx.xxx.xxx.xxx -j DROP

@@ -1,0 +1,5 @@
+Container Templates
+$ cd /var/lib/vz/template/cache/
+
+VMs
+$ cd /var/lib/vz/template/iso/

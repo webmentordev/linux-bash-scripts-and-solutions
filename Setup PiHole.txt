@@ -1,0 +1,79 @@
+# Must Setup Static IP on Server or VM or LXC
+
+$ sudo apt update && sudo apt upgrade -y
+$ sudo apt install curl -y
+$ sudo curl -sSL https://install.pi-hole.net | bash
+> ok
+> ok
+> Continue
+> ok
+> yes
+> yes (install Admin Web Interface)
+> yes (PHP Modules)
+> yes (Query Logging)
+> 0 then Continue
+
+After complete installation, it will show you
+your connection IP and Password
+
+http://*ipaddress*/admin
+
+# To Change Password
+$ pihole -a -p *your-password*
+
+
+================================================================================
+#Documentation Link for below process
+https://docs.pi-hole.net/guides/dns/unbound/
+
+
+$ sudo apt install unbound
+$ sudo nano /etc/unbound/unbound.conf.d/pi-hole.conf
+
+Copy all instead of big ====== lines and paste in file
+#============================================
+server:
+    verbosity: 0
+    interface: 127.0.0.1
+    port: 5335
+    do-ip4: yes
+    do-udp: yes
+    do-tcp: yes
+    do-ip6: no
+    prefer-ip6: no
+    harden-glue: yes
+    harden-dnssec-stripped: yes
+    use-caps-for-id: no
+    edns-buffer-size: 1232
+    prefetch: yes
+    num-threads: 1
+    so-rcvbuf: 1m
+    private-address: 192.168.0.0/16
+    private-address: 169.254.0.0/16
+    private-address: 172.16.0.0/12
+    private-address: 10.0.0.0/8
+    private-address: fd00::/8
+    private-address: fe80::/10
+#============================================
+
+$ sudo service unbound restart
+
+$ dig pi-hole.net @127.0.0.1 -p 5335
+
+
+Now opn your PiHole with
+http://*ipaddrsss*/admin
+
+> Go to Settings
+> Click DNS (on Top)
+> Uncheck both Ip4 Boxes
+> Check Custom 1 Ipv4 and Type 127.0.0.1#5335 in filed below
+> Save
+
+Now Use IP of your OS. Not 127.0.0.1 but the Address you used in http://*ipaddress*
+Change Primary DNS to that IP Address
+
+
+Finally Open your CMD in windows and Flush DNS 3-5 times
+
+ipconfig /flushdns

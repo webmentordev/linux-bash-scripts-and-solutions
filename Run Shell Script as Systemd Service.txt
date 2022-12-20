@@ -1,0 +1,36 @@
+> Create file in Downloads Folder
+
+$ mkdir bot
+
+> Change Directory to Bot and create SH file
+
+$ touch starbot.sh
+
+> Change Permissions
+
+$ chmod +x ./starbot.sh
+
+> Paste Following Code in it
+#!/bin/sh
+echo "Hello Service has started"
+
+> Create SystemD file name bot
+
+$ sudo nano /lib/systemd/system/bot.service
+
+> Paste Following Code in it
+
+[Unit]
+Description=Run Bot
+[Service]
+WorkingDirectory=/home/'username'/Downloads/bot
+ExecStart=/home/'username'/Downloads/bot/startbot.sh
+[Install]
+WantedBy=multi-user.target
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl enable startbot.service
+$ sudo systemctl start startbot.service
+$ sudo systemctl status startbot.service
+
+If Status is active then it is working fine

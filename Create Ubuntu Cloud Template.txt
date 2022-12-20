@@ -1,0 +1,53 @@
+==============================================================================================
+=============================================Ubuntu===========================================
+==============================================================================================
+Go To PVE Shell
+$ wget https://cloud-images.ubuntu.com/focal/20221027/focal-server-cloudimg-amd64.img
+$ qm create 8000 --memory 2024 --name ubuntu-cloud --net0 virtio,bridge=vmbr0
+$ qm importdisk 8000 focal-server-cloudimg-amd64.img local
+$ qm set 8000 --scsihw virtio-scsi-pci --scsi0 local:8000/vm-8000-disk-0.raw
+
+=========================OPTIONAL =========================
+$ qm resize 8000 scsi0 +5G
+Shrinking will not support
+===========================================================
+
+$ qm set 8000 --ide2 local:cloudinit
+$ qm set 8000 --boot c --bootdisk scsi0
+
+Click New 8000 VM and 
+Click Cloud Init than set following values
+===========================================
+User = root
+Password = your-desired-Password
+===========================================
+IP Config = DHCP
+Click RegenerateImage
+
+Now Create Clone Templates from it
+
+
+======================================================================================================
+================================With Diffrent Configuration===========================================
+======================================================================================================
+$ qm create 8000 --memory 1024 --name ubuntu-cloud --net0 virtio,bridge=vmbr0 --cipassword rusty --ciuser root --cores 1 --socket 1 --onboot 1
+$ qm importdisk 8000 focal-server-cloudimg-amd64.img local
+$ qm set 8000 --scsihw virtio-scsi-pci --scsi0 local:5
+$ qm resize 8000 scsi0 +5G
+$ qm set 8000 --ide2 local:cloudinit
+$ qm set 8000 --boot c --bootdisk scsi0
+
+Now Create Clone Templates from it
+
+
+======================================================================================================
+================================ (BEST) Diffrent Configuration===========================================
+======================================================================================================
+$ qm create 8000 --memory 1024 --name ubuntu-cloud --net0 virtio,bridge=vmbr0 --cipassword rusty --ciuser root --cores 1 --socket 1 --onboot 1 --args "-vnc 0.0.0.0:77,password=on"
+$ qm importdisk 8000 focal-server-cloudimg-amd64.img local
+$ qm set 8000 --scsihw virtio-scsi-pci --scsi0 local:8000/vm-8000-disk-0.raw
+$ qm resize 8000 scsi0 +5G
+$ qm set 8000 --ide2 local:cloudinit
+$ qm set 8000 --boot c --bootdisk scsi0
+
+Now Create Clone Templates from it

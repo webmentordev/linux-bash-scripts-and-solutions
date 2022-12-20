@@ -1,0 +1,362 @@
+who am i
+grep chris /etc/passwd
+date
+pwd
+hostname
+ls
+la -l -a -t
+ls -lat
+ls --hide=Desktop
+tar -cvf backup.tar /home/chris
+ls -a
+uname
+uname -a
+date +'%d/%m/%y'
+date +'%A, %B %d, %Y'
+id
+who
+who -uH
+/bin/date
+echo $PATH
+alias
+cd
+echo
+exit
+fg
+history
+pwd
+set
+type
+type bash (Search for command)
+which bash  (not in bash, Search for command)
+type -a ls
+locate
+locate chage
+updatedb
+ls /usr/bin | sort -f | less
+cat /etc/passwd | sort | less
+gunzip < /usr/share/man/man1/grep.1.gz | nroff -c -man | less
+date ; troff -me verylargedocument | lpr ; date
+troff -me verylargedocument | lpr &
+vi $(find /home | grep xyzzy)
+echo "I am $[1997 - 2022] years old"
+echo "There are $(ls | wc -w) files in this directory."
+env
+echo $USER
+declare
+alias
+alias p='pwd ; ls –CF'
+alias rm='rm -i'
+echo $BASH
+echo $BASH_VERSION
+echo $EUID
+echo $FCEDIT
+echo $HISTFILE
+echo $HISTFILESIZE
+echo $HISTCMD
+echo $HOME
+echo $HOSTTYPE
+echo $MAIL
+echo $OLDPWD
+echo $OSTYPE
+echo $PATH
+echo $PPID
+echo $PROMPT_COMMAND
+echo $PS1
+echo $PWD
+echo $RANDOM
+echo $SECONDS
+echo $SHLVL
+echo $TMOUT
+/etc/profile
+/etc/bashrc
+~/.bash_profile
+~/.bashrc
+~/.bash_logout
+nano $HOME/.bashrc
+source $HOME/.bashrc
+PATH=$PATH:/getstuff/bin ; export PATH
+M=/work/time/files/info/memos ; export M
+$M/hotdog
+ls /bin
+arch dd fusermount loadkeys mv
+awk df gawk login nano
+basename dmesg gettext ls netstat
+bash dnsdomainname grep lsblk nice
+cat domainname gtar lscgroup nisdomainname
+chgrp echo gunzip lssubsys ping
+chmod ed gzip mail ping6
+chown egrep hostname mailx ps
+cp env ipcalc mkdir pwd
+cpio ex kbd_mode mknod readlink
+csh false keyctl mktemp red
+cut fgrep kill more redhat_lsb_init
+dash find link mount rm
+date findmnt ln mountpoint rmdir
+info
+man command
+--help | less
+man -k passwd
+man passwd
+man 5 passwd
+mandb
+cd
+pwd
+mkdir
+chmod
+ls
+
+cd /usr/share/
+cd doc
+
+pwd
+cd ~/Music
+cd ../../../usr
+
+mkdir test
+ls -ld test
+
+chmod 700 testing
+
+cd test
+pwd
+
+* Matches any number of characters
+? Matches any one character.
+[...] Matches any one of the characters between the brackets, which can include a hyphenseparated
+range of letters or numbers
+
+touch apple banana grape grapefruit watermelon
+ls a* (matches any file that begins with a)
+ls g* (matches any files that begin with g)
+ls g*t (beginning with g and ending in t are matched)
+ls *e*
+ls *n*
+ls ????e
+ls g???e*
+ls [abw]* (any file beginning with a, b, or w is matched)
+ls [agw]*[ne] (file that begins with a, g, or w and also ends with either n or e is matched)
+ls [a-g]* (any filenames beginning with a letter from a through g are matched)
+mail root < ~/.bashrc
+man chmod | col -b > /tmp/chmod
+touch memo{1,2,3,4,5}
+touch {John,Bill,Sally}-{Breakfast,Lunch,Dinner}
+rm -f {John,Bill,Sally}-{Breakfast,Lunch,Dinner}
+touch {a..f}{1..5}
+
+cd $HOME/test
+touch script.sh apple
+chmod 755 script.sh
+mkdir Stuff
+ln -s apple pointer_to_apple
+===============================
+ls
+ls -l
+ls -la /home/joe
+==============================
+(x) set on an executable file
+(-rwsr-xr-x) or group (-rwxr-sr-x) permissions, or both (-rwsr-sr-x), the
+application can be run by any user, but ownership of the running process is
+assigned to the application’s user/group instead of that of the user launching the
+command
+t appears at the end of a directory, it indicates that the sticky bit is set for
+that directory (for example, drwxrwxr-t).
+
+$HOME
+/
+home/joe/test, I could enter cd ~joe/test
+A single dot (.) refers to the current directory
+Two dots (..) refer to a directory directly above the current directory
+$PWD This environment variable refers to the current working directory.
+$OLDPWD This environment variable refers to the previous working directory before you changed to the current one.
+
+. hidden files (-a let you see)
+-t displays files in the order in which they were most recently modified
+-F a backslash (/)
+* asterisk added to executable files
+@ is shown next to symbolic links
+
+ls -a
+ls -at
+ls -F
+ls --hide=g*
+ls -ld $HOME/test/
+mkdir -p $HOME/test/documents/memos/
+ls -R
+ls -S
+
+d(for a directory), l (for a symbolic link), b (for a block device), c (for a character device), s (for a socket), or p (for a
+named pipe).
+
+ls -ld ch3 test
+
+106
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

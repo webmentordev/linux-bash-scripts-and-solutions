@@ -1,0 +1,2 @@
+Allow following permission
+sudo chmod u+x /usr/share/screen-resolution-extra/nvidia-polkit

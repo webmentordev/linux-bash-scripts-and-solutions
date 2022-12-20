@@ -1,0 +1,14 @@
+To check your IP address and Interface
+
+$ ip a
+
+============================================
+To Assign static ip to Interface
+$ nmtui edit eth0
+
+Set IPv3 Configuration to Manual
+Addresses to any you want but ends with /24
+Gateway to your Routes/Modem's Gateway
+DNS Servers of you liking. Add 2 (8.8.8.8, 8.8.4.4)
+
+Just scroll down and click Ok. That's it 

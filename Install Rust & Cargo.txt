@@ -1,0 +1,11 @@
+====================Installing Rust On Linux==========================
+$ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+====================Install Cargo For Creating New Project============
+$ sudo apt install cargo
+============================Creating New Project=======================
+$ cargo init
+$ cargo new *projectname*
+============================Runnning New Project=======================
+$ rustc *filename_in_main*.rs
+===============================Uninstall Rust==========================
+$ rustup self uninstall

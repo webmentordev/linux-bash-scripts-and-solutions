@@ -1,0 +1,39 @@
+$ sudo yum install transmission-daemon
+$ sudo systemctl enable transmission-daemon
+$ sudo systemctl start transmission-daemon
+
+Allow Port "9091" in Firewall if there is any
+
+Open browser and write (you can find Linux ip by typing)
+
+$ ip a
+
+http://ipv4-address:9091
+
+=================================================================================
+If 403: Firbidden error show up then you have to whitelist your linux
+IP Address. Edit settings file and then follow on:
+First Stop Service
+
+$ sudo systemctl stop transmission-daemon
+$ sudo nano /var/lib/transmission/.config/transmission-daemon/settings.json
+
+Change following line
+
+rpc-whitelist: "127.0.0.1, linux ip-address but last host ID should be * like 192.168.100.*"
+
+$ sudo systemctl start transmission-daemon
+$ sudo systemctl restart transmission-daemon
+
+=================================================================================
+If you don't want to disable Authentication
+First Stop Service
+
+$ sudo systemctl stop transmission-daemon
+$ sudo nano /var/lib/transmission/.config/transmission-daemon/settings.json
+
+Change following lines
+rpc-authentication-required: false
+
+$ sudo systemctl start transmission-daemon
+$ sudo systemctl restart transmission-daemon

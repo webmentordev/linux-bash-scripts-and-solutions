@@ -1,0 +1,6 @@
+Delete Local LVM Thin
+ then go to pve1 and then click shell then write these commands
+
+$ lvremove /dev/pve/data
+$ lvresize -l +100%FREE /dev/pve/root
+$ resize2fs /dev/mapper/pve-root

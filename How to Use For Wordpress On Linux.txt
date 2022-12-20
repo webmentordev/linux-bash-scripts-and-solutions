@@ -1,0 +1,17 @@
+Install FTP
+$ sudo apt install vsftpd
+
+$ sudo systemctl status vsftpd
+
+$ sudo systemctl enable --now vsftpd
+
+
+Change Ownership of Wordpress project folders and files
+chown -R www-data *wordpress_directory*
+
+
+///////////////////////////////
+sudo ufw allow 20/tcp
+sudo ufw allow 21/tcp
+sudo ufw allow 990/tcp
+sudo ufw allow 5000:10000/tcp

@@ -1,0 +1,9 @@
+$ sudo apt install wget -y
+$ wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && bash install.sh aapanel
+
+Open Ports in Firewall
+7800,8888,80,443,20,21
+
+You will get login Link, username & password after installation is complete
+
+Always Open Link with https://

@@ -1,0 +1,38 @@
+- Create Group:
+$ sudo groupadd *group name*
+
+- Adding New User to the SFTP Group (Read Below for already created user)
+$ sudo useradd -g *group name* -s /bin/false -m -d /home/*username* *username*
+$ sudo passwd *username* (to set password on new created user)
+
+###The -g *group name* option will add the user to the sftponly group.
+###The -s /bin/false option sets the user’s login shell. By setting the login shell to /bin/false the user will not be able to login to the server via SSH.
+###The -m -d /home/*username* options tells useradd to create the user home directory.
+
+- Adding Already Created User to the SFTP Group (Read Above for creating new user)
+$sudo usermod -G *group name* -s /bin/false /username*
+
+- The user home directory must be owned by root and have 755 permissions
+$ sudo chown root: /home/*username*
+$ sudo chmod 755 /home/*username*
+
+- Create Directories as Users can't create for themselves
+$ sudo mkdir /home/*username*/{public_html,uploads}
+$ sudo chmod 755 /home/*username*/{public_html,uploads}
+$ sudo chown *username who is in the group*:*groupname* /home/*username*/{public_html,uploads}
+
+-Configuring SSH for Group
+$ sudo nano /etc/ssh/sshd_config
+(Type this below the line Subsystem sftp internal-sftp)
+
+Match Group *groupname*
+  ChrootDirectory %h
+  ForceCommand internal-sftp
+  AllowTcpForwarding no
+  X11Forwarding no
+
+$ sudo systemctl restart ssh
+
+- Login to the sft
+$ sftp username@192.168.121.30
+username@192.168.121.30's password: $

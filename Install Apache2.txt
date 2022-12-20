@@ -1,0 +1,5 @@
+Debian / Ubuntu
+$ sudo apt install apache2
+
+centOS 7
+$ sudo yum install apache2

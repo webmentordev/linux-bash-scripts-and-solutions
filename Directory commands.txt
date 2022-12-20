@@ -1,0 +1,19 @@
+ls
+pwd
+cd
+mkdir
+mkdir -p
+rmdir
+cp -r awesome superawesome
+mv awesome superawesome
+
+
+touch hello.txt
+rm hello.txt
+rm -f hello.txt
+cp hello.txt hi.txt
+mv hello.txt hi.txt
+mv /example/hello.txt /awesome/
+
+head fruits.txt   ----- first 10 lines of file
+tail fruits.txt   ----- last 10 line of file

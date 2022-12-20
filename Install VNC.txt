@@ -1,0 +1,11 @@
+$ sudo apt update
+
+if you wanne have the desktop environment
+$ sudo apt install xfce4 xfce4-goodies
+$ sudo apt install tightvncserver
+$ vncserver
+	* Type Password for login
+Default port is 5901. Login with IPAddress:Port
+
+To Change password
+$ vncpasswd

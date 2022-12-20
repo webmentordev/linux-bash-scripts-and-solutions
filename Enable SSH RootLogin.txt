@@ -1,0 +1,7 @@
+$ nano /etc/ssh/sshd_config
+
+Change these values to:
+
+PermitRootLogin yes
+PasswordAuthentication yes
+Port 22

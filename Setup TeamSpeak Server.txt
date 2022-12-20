@@ -1,0 +1,57 @@
+$ sudo adduser --disabled-login teamspeak       (This command will create a user teamspeak wihtout login requirement, but in some system it need password)
+$ passwd teamspeak        (Setup password of your liking)
+$ su - teamspeak          (to switch user)
+$ wget https://files.teamspeak-services.com/releases/server/3.13.7/teamspeak3-server_linux_amd64-3.13.7.tar.bz2      (Download Teamspeak)
+$ tar xvfj teamspeak3-server_linux_amd64-3.13.7.tar.bz2         (Extract Teamspeak)
+$ touch .ts3server_license_accepted
+$ exit
+$ sudo nano /lib/systemd/system/ts3server.service
+
+
+In below script User= can be root or remove it
+===================Paste the following text====================
+[Unit]
+Description=Teamspeak3 Server
+Wants=network.target
+
+[Service]
+WorkingDirectory=/home/teamspeak/teamspeak3-server_linux_amd64
+User=teamspeak
+ExecStart=/home/teamspeak/teamspeak3-server_linux_amd64/ts3server_minimal_runscript.sh start
+ExecStop=/home/teamspeak/teamspeak3-server_linux_amd64/ts3server_startscript.sh stop
+ExecReload=/home/teamspeak/teamspeak3-server_linux_amd64/ts3server_startscript.sh restart
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+chmod +x /home/teamspeak/teamspeak3-server_linux_amd64/ts3server_minimal_runscript.sh
+chmod +x /home/teamspeak/teamspeak3-server_linux_amd64/ts3server_startscript.sh
+chmod +x /home/teamspeak/teamspeak3-server_linux_amd64/ts3server_startscript.sh
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl start ts3server
+$ sudo systemctl enable ts3server
+$ systemctl status ts3server
+
+When you will run this upper status command you will find a token=********************************
+something liek this. Copy it.
+
+====================Now set password for login=======================
+$ sudo systemctl stop ts3server
+$ su - teamspeak
+$ ./ts3server_startscript.sh start serveradmin_password=your_password           (if you do it, it will start the server with password)
+$ sudo systemctl start ts3server
+
+
+=====================Now connect to Teamspeak========================
+Download Teamspeak
+Use your IP address of your OS to connect.
+It will ask you for tokean, paste what you copied before or go to line 30
+and run that command, it will give you Token, use it
+
+BADA5HUXhhQ2XMxRU260PM8spdFsMh_m3MBS6ZT
+LN2kYSXFIHHgDmebPLz9Q9gEFCDqQn2/mNMNinnui3Y=

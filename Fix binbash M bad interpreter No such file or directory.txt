@@ -1,0 +1,6 @@
+$ sudo apt-get install dos2unix
+$ dos2unix FILENAME.sh
+
+it will be converted to correct format
+
+$ ./FILENAME.sh

@@ -1,0 +1,14 @@
+apt install mingetty
+
+mkdir -p /etc/systemd/system/getty@tty1.service.d
+
+Now run the following script:
+
+cat > /etc/systemd/system/getty@tty1.service.d/override.conf <<- "_EOF_"
+ [Service]
+ ExecStart=
+ ExecStart=-/sbin/mingetty --autologin root --noclear tty1
+_EOF_
+
+
+systemctl enable getty@tty1.service

@@ -1,0 +1,4 @@
+https://phoenixnap.com/kb/how-to-install-a-gui-on-ubuntu
+https://linuxhint.com/install_gnome_debian_10_minimal_server/
+https://techglimpse.com/install-desktop-gui-ubuntu-linux-server/
+https://linuxconfig.org/ubuntu-20-04-gui-installation

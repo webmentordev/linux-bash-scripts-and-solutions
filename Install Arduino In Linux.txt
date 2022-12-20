@@ -1,0 +1,7 @@
+GO TO = https://www.arduino.cc/en/Guide/Linux and download file
+Extract With Extract Here
+Open Extracted Folder in Terminal
+==================================================================
+$ sudo ./install.sh
+$ ls -l /dev/ttyACM* (it will show you list of users)
+$ sudo usermod -a -G dialout <username>    (use your Username here)

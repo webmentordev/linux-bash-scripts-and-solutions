@@ -1,0 +1,4 @@
+$ sudo apt update && sudo apt upgrade
+$ sudo apt install tasksel -y
+$ sudo tasksel install xfce-desktop
+$ sudo reboot now

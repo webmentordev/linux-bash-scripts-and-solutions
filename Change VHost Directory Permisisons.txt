@@ -1,0 +1,19 @@
+$ cd /etc/apache2
+$ sudo nano apache2.conf
+
+==================================================================
+====================Default Directory Permisisons=================
+==================================================================
+<Directory /var/www/>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+</Directory>
+==================================================================
+=======================Your Directory Permisisons=================
+==================================================================
+<Directory /media/newhd/test_web/>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+</Directory>

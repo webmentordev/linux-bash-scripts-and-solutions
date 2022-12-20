@@ -1,0 +1,11 @@
+$ sudo apt install mysql-server
+$ mysql --version
+
+$ sudo mysql
+$ SELECT User,Host,authentication_string from mysql.user;
+$ CREATE USER 'webmentor'@'localhost' IDENTIFIED BY 'Thedivision#3321';
+$ GRANT ALL PRIVILEGES ON *.* TO 'webmentor'@'localhost' WITH GRANT OPTION;
+$ SELECT User,Host,authentication_string from mysql.user;
+$ sudo systemctl restart mysql;
+
+$ mysql -u *username* -p

@@ -1,0 +1,4 @@
+Create a script file, e.g. named my_file.sh, in the /etc/profile.d/ directory.
+Put #!/bin/bash as the first line.
+Write whatever command(s) you want to be executed immediately after logging in, e.g. pgrep udhcpd.
+Mark your file as executable: chmod +x /etc/profile.d/my_file.sh

@@ -1,0 +1,29 @@
+1.Create Folder that you want to place your website in. then type
+$ pwd
+(Copy the output)
+
+2. Change Default folder by changing in folder. Type
+$ sudo nano /etc/apache2/sites-available/000-default.conf
+
+3. Change the following. Type in *link* your output you copied from pwd command
+DocumentRoot *link*
+
+4. Now you to give permission to that folder to apache2
+$ sudo nano /etc/apache2/apache2.conf
+(Copy and paste the following to the end)
+
+<Directory 'link'>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+</Directory>
+
+5. Now Change Presidence Of .php file to open first then .html
+$ sudo nano /etc/apache2/mods-enabled/dir.conf
+(Change Everything the Following)
+
+<IfModule mod_dir.c>
+        DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
+</IfModule>
+
+sudo service apache2 restart

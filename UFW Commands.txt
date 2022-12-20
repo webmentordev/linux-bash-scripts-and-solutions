@@ -1,0 +1,31 @@
+$ sudo apt-get install net-tools 
+$ sudo apt install ufw
+$ sudo ufw enable
+$ sudo ufw status
+================================AllowConnection=======================================
+$ sudo ufw allow OpenSSH------------------------------------(allow SSH or port 22)
+$ sudo ufw allow 7722/tcp
+$ sudo ufw allow 7722/udp
+$ sudo ufw allow http---------------------------------------(allow http or port 80)
+$ sudo ufw allow 80/tcp
+$ sudo ufw allow https--------------------------------------(allow http or port 443)
+$ sudo ufw allow 443/tcp	 
+$ sudo ufw allow 8080/tcp-----------------------------------(allow tomcat)
+$ sudo ufw allow 7100:7200/tcp------------------------------(allow tcp port with range)
+$ sudo ufw allow 7100:7200/udp------------------------------(allow udp port with range)
+$ sudo ufw allow from 64.63.62.61---------------------------(allow connection from IP)
+$ sudo ufw allow from 64.63.62.61 to any port 22------------(allow connection from IP to port)
+$ sudo ufw allow from 192.168.1.0/24 to any port 3306-------(Allow connection from IP address from 192.168.1.1 to 192.168.1.254)
+$ sudo ufw allow in on eth2 to any port 3306----------------(Allow Connections to a Specific Network Interface)
+=================================DenyConnection=======================================
+$ sudo ufw deny from 23.24.25.0/24--------------------------(Deny Connection from 23.24.25.1.1 to 23.24.25.1.254)
+$ sudo ufw deny from 23.24.25.0/24 to any port 80-----------(Deny Connection from 23.24.25.1.1 to 23.24.25.1.254 on port 80)
+$ sudo ufw deny from 23.24.25.0/24 to any port 443----------(Deny Connection from 23.24.25.1.1 to 23.24.25.1.254 on port 443)
+=================================Delete/Reset/DisableRules=======================================
+$ sudo ufw status numbered----------------------------------(Show ports in number)
+$ sudo ufw delete 3-----------------------------------------(Delete Number 3 Rule)
+$ sudo ufw delete allow 8069--------------------------------(Delete Rule with 8069)
+$ sudo ufw disable------------------------------------------(Disable UFW)
+$ sudo ufw reset--------------------------------------------(Reset UFW)
+
+

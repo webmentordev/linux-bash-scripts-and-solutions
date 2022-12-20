@@ -1,0 +1,22 @@
+php-mbstring: A module for managing non-ASCII strings and convert strings to different encodings
+php-zip: This extension supports uploading .zip files to phpMyAdmin
+php-gd: Enables support for the GD Graphics Library
+php-json: Provides PHP with support for JSON serialization
+php-curl: Allows PHP to interact with different kinds of servers using different protocols
+
+$ sudo apt update
+$ sudo apt install phpmyadmin
+$ sudo apt install phpmyadmin php-mbstring php-zip php-gd php-json php-curl
+
+1. Select Apache2
+2. Yes
+3. Select Password But If Failed then abort
+4. 
+$ sudo mysql
+$ mysql -u root -p     //    $ sudo mysql -u root -p
+> UNINSTALL COMPONENT "file://component_validate_password";
+> INSTALL COMPONENT "file://component_validate_password";
+> exit
+$ sudo apt install phpmyadmin
+$ sudo phpenmod mbstring
+$ sudo systemctl restart apache2

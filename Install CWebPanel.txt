@@ -1,0 +1,12 @@
+CentOS 7 Required
+
+$ sudo yum update && sudo yum upgrade -y
+$ sudo yum install wget
+$ cd /usr/local/src
+$ wget http://centos-webpanel.com/cwp-el7-latest
+$ sh cwp-el7-latest
+$ reboot
+
+http://serverIP:2031
+username: root
+password: *centOS root password*

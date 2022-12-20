@@ -1,0 +1,46 @@
+===================================================
+=====================TEMPORARY=====================
+===================================================
+Check your network interfaces
+
+$ ip a 
+
+Add IP Address into the Interface
+$ sudo ip addr add 10.102.66.200/24 dev enp0s25
+
+Setup your IP as Default
+$ sudo ip route add default via 10.102.66.1
+
+Check Ip Routes
+$ ip route show
+
+Delete IP
+$ sudo ip addr del 10.102.66.200/24 dev enp0s25
+
+Check & Change DNS
+$ /etc/resolv.conf
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+
+
+===================================================
+=====================STATIC-IP=====================
+===================================================
+$ ip a (check your Interface)
+$ sudo nano /etc/netplan/01_static_ips.yaml  (Create Static IP)
+===========================
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eth0:
+      dhcp4: no
+      addresses: [192.168.100.181/24, 192.168.100.182/24, 192.168.100.183/24, 192.168.100.184/24, 192.168.100.185/24]
+      gateway4:  192.168.100.1
+      nameservers:
+              addresses: [8.8.8.8, 8.8.4.4]
+
+
+$ sudo netplan apply
+
+$ sudo reboot now

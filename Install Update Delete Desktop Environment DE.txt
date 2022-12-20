@@ -1,0 +1,29 @@
+==================NOTE=================
+If you want to update to to new DE, simply find installed DEs
+with commnd below then uninstall all. then reboot. Then Install new DE
+using Tasksel (Installation mentioned below)
+
+
+To Check All Installed DEs used this command:
+$ ls -l /usr/share/xsessions/
+
+
+========================================================================================
+To Remove All DEs and convert Ubuntu to Server
+========================================================================================
+Replace ubunut-desktop with your installed DE(s)
+$ sudo apt purge ubuntu-desktop -y 
+$ sudo apt autoremove -y
+$ sudo apt autoclean
+$ sudo apt install ubuntu-server
+$ reboot
+$ sudo systemctl set-default multi-user.target
+$ reboot
+
+
+========================================================================================
+Install Tasksel to install New Desktop Environments
+========================================================================================
+$ sudo apt install tasksel -y
+$ sudo tasksel
+Here you will select 2 options (Desktop and Minimal) e.g ubuntu MATE Desktop & ubuntu MATE Minimal

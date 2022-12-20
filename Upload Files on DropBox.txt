@@ -1,0 +1,18 @@
+===============================================================================
+GET Access Token
+===============================================================================
+1- Login Dropbox first then
+2- Go to https://www.dropbox.com/developers/apps
+3- Create New APP
+4- Go to permissions tab and assign all permissions
+5- Go to settings then click Generate in OAuth
+6- Copy Large text and use it as ACCESS_TOKEN
+
+curl -X POST https://content.dropboxapi.com/2/files/upload \
+    --header "Authorization: Bearer <ACCESS_TOKEN>" \
+    --header "Dropbox-API-Arg: {\"path\": \"/Homework/math/Matrices.txt\"}" \
+    --header "Content-Type: application/octet-stream" \
+    --data-binary @*filename-with-extension*
+
+
+/Homework/math/ is the path where File will be uploaded in DropBox

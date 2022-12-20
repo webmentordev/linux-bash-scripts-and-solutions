@@ -1,0 +1,4 @@
+Linux automatically detects SSD, and since kernel version 2.6.29, you may verify sda with:
+
+cat /sys/block/sda/queue/rotational
+You should get 1 for hard disks and 0 for a SSD.

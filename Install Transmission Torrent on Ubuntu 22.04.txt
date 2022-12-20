@@ -1,0 +1,24 @@
+$ sudo apt install transmission-daemon -y
+
+$ sudo systemctl enable transmission-daemon
+$ sudo systemctl start transmission-daemon
+
+if you have ufw enable then run this command to allow port
+$ sudo ufw allow 9091
+
+http://ip-address:9091
+
+If 403 error showup then edit the file using following command
+then change 2 values. First line will whitelist your ip-address
+second line will disable authentication. First stop the service
+
+$ sudo systemctl stop transmission-daemon
+$ sudo nano /etc/transmission-daemon/settings.json
+
+"rpc-whitelist": "127.0.0.1, linux ip-address but last hostID should be * like 192.168.100.*"
+"rpc-authentication-required": false,
+
+$ sudo systemctl start transmission-daemon
+$ sudo systemctl restart transmission-daemon
+
+Now try to refresh the page and then transmission will start working

@@ -1,0 +1,46 @@
+Prefered Way is Last one
+
+You must have php installed or install with
+$sudo apt-get install php7.4-cli
+==========================Way 1=======================================
+$ sudo apt update
+$ sudo apt install wget php-cli php-zip unzip
+$ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+$ HASH="$(wget -q -O - https://composer.github.io/installer.sig)"
+$ php -r "if (hash_file('SHA384', 'composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+$ sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+$ composer
+$ sudo apt install phpunit
+$ composer create-project laravel/laravel my-project
+
+==========================Way 2=======================================
+$ sudo apt update && sudo apt install wget php-cli php-zip unzip curl
+$ curl -sS https://getcomposer.org/installer |php
+$ sudo mv composer.phar /usr/local/bin/composer
+$ sudo apt install phpunit
+$ composer
+$ composer create-project laravel/laravel my-project
+
+===========================Way 3=============================================
+$ sudo apt install wget php-cli php-zip unzip phpunit curl php-pear php-dev php-xml php-pdo php-common
+$ curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
+$ HASH=`curl -sS https://composer.github.io/installer.sig`
+$ php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+$ sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+$ composer
+$ sudo composer self-update
+$ composer update
+
+===========================Way 4=============================================
+$ sudo apt install wget php-cli php-zip unzip
+$ wget -O composer-setup.php https://getcomposer.org/installer
+------Install Globally-----
+$ sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+------Install Locally------
+$ sudo php composer-setup.php --install-dir=/path/to/project
+
+
+$ sudo composer self-update
+
+
+

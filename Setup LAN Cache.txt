@@ -1,0 +1,99 @@
+Using Debian 11 Server (If using Virtual Machine then run it In Bridge Network)
+Must use Root Login.
+==============================================================================
+Install Required Repos
+$ apt install docker.io docker-compose git curl net-tools -y
+
+==============================================================================
+Configure Network to Set Static IP address and DNS Server.
+Remember, DNS nameservers can be same as your Router's DNS
+
+$ nano /etc/network/interfaces
+
+Now, only change primary
+    auto *your interface here. better leave it default*
+    iface *your interface here again. better leave it default* inet static
+    address *Desired IP address*
+    netmask *Your Netmask*
+    gateway *Your Router Default Gateway*
+    dns-nameservers *Use Router Default Gateway as DNS*
+
+My Settings as Example
+    allow-hotplug ens33
+    auto ens33
+    iface ens33 inet static
+        address 192.168.100.180
+        netmask 255.255.255.0
+        gateway 192.168.100.1
+    dns-nameservers 192.168.100.1
+
+Configure Static DNS. In file, Only change nameserver as above
+$ nano /etc/resolv.conf
+
+nameserver *dns-nameservers you used above*
+
+Now Restart Service or Reboot System
+
+$ systemctl restart networking
+$ reboot now
+
+==============================================================================
+Now we will download Lan Cache files from Github and Setup to Run docker
+$ git clone https://github.com/lancachenet/docker-compose/ lancache
+$ cd lancache
+$ nano .env
+
+Now Change Some settings In file
+    LANCACHE_IP is your ip address you set in /etc/network/interfaces file
+    DNS_BIND_IP is again your ip address
+    UPSTREAM_DNS is same as dns-nameservers
+
+After saving the file run following command. It will download files and start the server.
+$ docker-compose up -d
+
+Check Status If Docker is running
+$ docker stats
+
+if above command show two names, lancache_dns_1 nad lancache_monolithic_1, are running in process
+that means Docker is successfully Running.
+
+
+
+=================================================================================
+Disabling systemd-resolved DNSStubListener
+Your downloding will not work sometime if you don't do this configuration
+
+$ sudo -e /etc/systemd/resolved.conf    (here, Uncomment #DNSStubListener= and set it to no)
+$ sudo rm /etc/resolv.conf
+$ sudo ln -s /var/run/systemd/resolve/resolv.conf /etc/resolv.conf
+$ sudo service systemd-resolved restart
+
+=================================================================================
+Now setup DNS in windows.
+* Go to Network Properties
+* Uncheck 1 with IPv6
+* Click Properties of IPv4
+* Click Use following DNS
+    Prefered = ip address of debian you set in /etc/network/interfaces
+    Alternative = Router DNS that you used in dns-nameservers
+* then save it.
+
+==================================================================================
+Check If everything is working.
+
+* Open Commandline then type and enter this command 4-5 times
+    ipconfig /flushdns
+
+* Checking If you have local lancache ip with two command. RUn Both
+    nslookup steam.cache.lancache.net
+    nslookup lancache.steamcontent.com
+
+If above command show your Local Server IP Address that you set in /etc/network/interfaces
+then it is working. Now you can Download Game and Test it.
+To Check if server is caching.
+Open Server and type:
+$ docker stats
+
+if CPU usage is going above 0.1% like more then 10-15% then it is writing to the disk
+
+Congatulations you have successfully setup your cache server.

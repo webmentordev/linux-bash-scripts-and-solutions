@@ -1,0 +1,22 @@
+Best Way is 3rd
+================Way 1=====================
+$ sudo apt-get install xz-utils
+(open terminal in file folder then type)
+$tar xvfJ FILENAME.tar.xz
+$ sudo cp -r node-v14.15.5-linux-x64/{bin,include,lib,share} /usr/
+
+================Way 2=====================
+1. Right click file and extract file here
+2. Open same Folder in terminal (not the one after extracting)
+
+(type this command in terminal with your node file version. Following is 14.15.2)
+sudo cp -r node-v14.15.5-linux-x64/{bin,include,lib,share} /usr/
+
+
+================Way 3=====================
+$ sudo apt-get install xz-utils
+
+(open terminal in file folder then type)
+$ sudo tar -xf FILENAME.tar.xz
+$ sudo cp -r node-FILE-VERSION-linux-x64/{bin,include,lib,share} /usr/
+
