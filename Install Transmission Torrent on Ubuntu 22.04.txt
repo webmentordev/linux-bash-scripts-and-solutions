@@ -22,3 +22,8 @@ $ sudo systemctl start transmission-daemon
 $ sudo systemctl restart transmission-daemon
 
 Now try to refresh the page and then transmission will start working
+
+
+Change Default Download Location
+
+$ transmission-remote -w 'Download location like /home/ahmer/Downloads'
