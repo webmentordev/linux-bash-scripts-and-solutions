@@ -19,4 +19,4 @@ $ ip a
 $ ./pocketbase serve --http="*your-linux-ip*:8090"
 
 With above command, we are running pocket base on our local ip address. By default,
-without --http, Pocketbase will run on 127.0.0.1 Ip and will not be accessable on your network devices. so do it this way.
+without --http, Pocketbase will run on 127.0.0.1 Ip and will not be accessable on your network devices. so do it this way. You can change port too if you like.
