@@ -1,0 +1,22 @@
+First Update your OS
+$ sudo apt update && sudo apt upgrade -y
+============================================================
+Install Unzip & Wget
+$ sudo apt install wget Unzip
+============================================================
+Download Pocketbase from official Website and select linux Version: https://pocketbase.io/docs/
+
+$ wget https://github.com/pocketbase/pocketbase/releases/download/v0.10.3/pocketbase_0.10.3_linux_amd64.zip
+
+============================================================
+Extract the download file with Unzip (In my case file name is, change it to your's)
+$unzip pocketbase_0.10.3_linux_amd64.zip
+
+Now Run Pocketbase.Remember, you have to run on your linux ip so you can find ip
+with command. First cd to folder where you have extracted the download file
+$ ip a
+
+$ ./pocketbase serve --http="*your-linux-ip*:8090"
+
+With above command, we are running pocket base on our local ip address. By default,
+without --http, Pocketbase will run on 127.0.0.1 Ip and will not be accessable on your network devices. so do it this way.
