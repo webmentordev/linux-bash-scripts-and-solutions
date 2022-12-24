@@ -1,3 +1,6 @@
+If you do this, any time user with the IP address, their commection will be
+Rejected. This is like shadow ban. I usually use it for my Server BAN.
+I add Cheater's IP address or Subnet. 
 :::::::::::::::::::::::::::::BAN IP Address UFW:::::::::::::::::::::::::::::
 $ sudo ufw enable
 $ sudo ufw status
