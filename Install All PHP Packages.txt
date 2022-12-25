@@ -1,0 +1,4 @@
+If you want to use PHP in Linux, install these packages to make PHP fully function with Apache2, MySQL & phpMyAdmin.
+
+===========================================================================================================================
+$ sudo apt install php php-cli php-mbstring php-gd php-zip phpunit php-pear php-dev php-xml php-pdo php-common php-mysql libapache2-mod-php php-cgi php-intl -y
