@@ -1,0 +1,24 @@
+It is a simple Script to Install Code Server or VSCode server on Linux.
+The @$USER will enable & start Code Server for current user.
+=====================================================================
+$ curl -fsSL https://code-server.dev/install.sh | sh
+$ sudo systemctl enable --now code-server@$USER
+$ sudo systemctl start code-server@$USER
+
+=====================================================================
+Now we are going to change ip binding.  First run commend:
+$ nano ~/.config/code-server/config.yaml
+Now change 127.0.0.1 to 0.0.0.0
+
+========================================================================
+=================================Optional===============================
+========================================================================
+Do this if you want to use VSCode in your browser.
+1. Type your Linux IP address in browser like this (http://ip-address:8080)
+(Use your Port if you have changed it)
+2. you are going to need password to login. Go to your Linux and type:
+$ nano ~/.config/code-server/config.yaml 
+Copy password from this or you can change it too.
+
+If you change password make sure you restart Code Server with:
+$ sudo systemctl restart code-server@$USER
