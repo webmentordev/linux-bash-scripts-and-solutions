@@ -1,0 +1,70 @@
+Script Features:
+1. Auto Update the server
+2. Auto donwload and install Oxide
+3. Auto Restart server on every crash
+
+====================================================
+Make sure you have steamcmd installed in /root/Steam
+Make sure your start_server.sh file is in /root/RustServer
+You can replace it with the user and directory you want
+====================================================
+
+# 1. Create service file with command
+
+$ nano /lib/systemd/system/rust-server.service
+
+# Paste following code
+[Unit]
+Description=Rust Game Server
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/RustServer/
+ExecStart=/root/RustServer/start_server.sh
+Restart=on-failure
+RestartSec=10s
+[Install]
+WantedBy=multi-user.target
+
+# 2. Start The Service and Link
+$ systemctl daemon-reload
+$ systemctl start rust-server
+$ systemctl enable rust-server
+
+# 2. Create file in /root/RustServer and Paste it
+===========================================================================================
+#!/bin/sh
+while :
+do
+ echo "Starting Server..."
+ sleep 10
+
+ /root/Steam/steamcmd.sh \+force_install_dir /root/RustServer \+login anonymous \+app_update 258550 \+quit
+
+ echo "Updating Oxide..."
+ sleep 5
+
+ wget -c https://umod.org/games/rust/download/develop -O UmodUpdate.zip
+ unzip -o UmodUpdate.zip
+ rm UmodUpdate.zip
+
+ echo "Starting.."
+ sleep 5
+ ./RustDedicated -batchmode -nographics \
+ -server.ip 0.0.0.0 \
+ -server.port 28015 \
+ -rcon.ip 0.0.0.0 \
+ -rcon.port 28016 \
+ -rcon.password "yourpassword" \
+ -server.maxplayers 250 \
+ -server.level "Procedural Map" \
+ -server.seed 89754 \
+ -server.worldsize 2300 \
+ -server.hostname "ServerName" \
+ -server.identity "my_server_identity" \
+ -server.saveinterval 300 \-server.globalchat true \
+ -server.url "https://rustyocean.club"
+ echo "\nRestarting server...\n"
+done
+===========================================================================================
