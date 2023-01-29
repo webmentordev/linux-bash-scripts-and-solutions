@@ -8,14 +8,11 @@ $ sudo ufw allow 21/tcp
 ========================================================================
 ========================Allow User to upload files======================
 ========================================================================
-$ nano /etc/vsftpd.conf
+$ sudo nano /etc/vsftpd.conf
 
 write_enable=YES (uncomment it then change NO to YES)
 chroot_local_user=YES (uncomment)
 chroot_list_file=/etc/vsftpd.chroot_list (uncomment)
+allow_writeable_chroot=YES (add this line anywhere)
 
-$ systemctl restart vsftpd
-========================================================================
-=============================Enable Connection==========================
-========================================================================
-echo 'allow_writeable_chroot=YES' >> /etc/vsftpd.conf && systemctl restart vsftpd
+$ sudo systemctl restart vsftpd

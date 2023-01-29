@@ -7,11 +7,12 @@ Script Features:
 Make sure you have steamcmd installed in /root/Steam
 Make sure your start_server.sh file is in /root/RustServer
 You can replace it with the user and directory you want
+It is recommended not to use the Root account
 ====================================================
 
 # 1. Create service file with command
 
-$ nano /lib/systemd/system/rust-server.service
+$ sudo nano /lib/systemd/system/rust-server.service
 
 # Paste following code
 [Unit]
@@ -28,9 +29,9 @@ RestartSec=10s
 WantedBy=multi-user.target
 
 # 2. Start The Service and Link
-$ systemctl daemon-reload
-$ systemctl start rust-server
-$ systemctl enable rust-server
+$ sudo systemctl daemon-reload
+$ sudo systemctl start rust-server
+$ sudo systemctl enable rust-server
 
 # 2. Create file in /root/RustServer and Paste it
 ===========================================================================================
