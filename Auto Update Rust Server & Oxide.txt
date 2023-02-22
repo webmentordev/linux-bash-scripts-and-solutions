@@ -1,0 +1,34 @@
+:: "This is a comment. Characters following a double colon are not interperated as a command by the cmd." 
+:: "==== Check For Updates ==============================================================================================================================================================="
+:: "App Versions: +app_update 258550 -beta staging | +app_update 258550 -beta prerelease"
+echo off
+:start 
+"..\steamCMD\steamcmd.exe" +force_install_dir "..\rustserver" +login anonymous +app_update 258550 +quit
+:: "==== Launch Server ==================================================================================================================================================================="
+:: "• Server Levels: Procedural Map | Barren | HapisIsland | SavasIsland | SavasIsland_koth"
+:: "• Remember to include ^ character after each command. This is what allows us to align them vertically. Otherwise, it will need to be horizontal, like the Check For Updates section above."
+curl -SL -A "Mozilla/5.0" "https://umod.org/games/rust/download" --output oxidemod.zip
+tar -xvf oxidemod.zip
+del oxidemod.zip
+echo off
+:start 
+RustDedicated.exe -batchmode ^
+-levelurl "https://www.dropbox.com/s/oh5plcso8p6gryj/1.map?dl=1" ^
++oxide.directory "C:\rustageservers\rustserver\server\rustageservers3\oxide" ^
++server.maxplayers 150 ^
++server.identity "rustageservers3" ^
++server.hostname "RustAge 5x SOLO/DUO/TRIO" ^
++server.description "In progress, only used to test custom monuments" ^
++server.url "http://customsite.com" ^
++server.headerimage "http://customsite.com/image.png" ^
++server.port 28035 ^
++rcon.port 28036 ^
++server.queryport 28037 ^
++app.port 28038 ^
++rcon.password Laksefisker11 ^
++rcon.web 1 ^
++spawn.min_rate 1.5 ^
++spawn.max_rate 1.6 ^
++spawn.min_density 1.5 ^
++spawn.max_density 1.6 ^
+goto start
