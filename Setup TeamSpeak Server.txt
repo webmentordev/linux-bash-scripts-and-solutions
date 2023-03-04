@@ -1,8 +1,9 @@
 $ sudo adduser --disabled-login teamspeak       (This command will create a user teamspeak wihtout login requirement, but in some system it need password)
-$ passwd teamspeak        (Setup password of your liking)
+$ passwd teamspeak        (OPTIONAL - Setup password of your liking)
 $ su - teamspeak          (to switch user)
 $ wget https://files.teamspeak-services.com/releases/server/3.13.7/teamspeak3-server_linux_amd64-3.13.7.tar.bz2      (Download Teamspeak)
 $ tar xvfj teamspeak3-server_linux_amd64-3.13.7.tar.bz2         (Extract Teamspeak)
+$ cd teamspeak3-server_linux_amd64
 $ touch .ts3server_license_accepted
 $ exit
 $ sudo nano /lib/systemd/system/ts3server.service
@@ -52,6 +53,3 @@ Download Teamspeak
 Use your IP address of your OS to connect.
 It will ask you for tokean, paste what you copied before or go to line 30
 and run that command, it will give you Token, use it
-
-BADA5HUXhhQ2XMxRU260PM8spdFsMh_m3MBS6ZT
-LN2kYSXFIHHgDmebPLz9Q9gEFCDqQn2/mNMNinnui3Y=
