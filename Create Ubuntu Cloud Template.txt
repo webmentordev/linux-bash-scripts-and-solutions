@@ -1,3 +1,4 @@
+Use Last Way
 ==============================================================================================
 =============================================Ubuntu===========================================
 ==============================================================================================
@@ -41,7 +42,7 @@ Now Create Clone Templates from it
 
 
 ======================================================================================================
-================================ (BEST) Diffrent Configuration===========================================
+================================ Diffrent Configuration========================================
 ======================================================================================================
 $ qm create 8000 --memory 1024 --name ubuntu-cloud --net0 virtio,bridge=vmbr0 --cipassword rusty --ciuser root --cores 1 --socket 1 --onboot 1 --args "-vnc 0.0.0.0:77,password=on"
 $ qm importdisk 8000 focal-server-cloudimg-amd64.img local
@@ -51,3 +52,15 @@ $ qm set 8000 --ide2 local:cloudinit
 $ qm set 8000 --boot c --bootdisk scsi0
 
 Now Create Clone Templates from it
+
+===============================================================================================
+================================ (BEST) Complete Config (Ubuntu)========================================
+===============================================================================================
+Go To PVE Shell
+$ wget https://cloud-images.ubuntu.com/focal/20230209/focal-server-cloudimg-arm64.img
+$ qm create 8000 --memory 1024 --name ubuntu-cloud --net0 virtio,bridge=vmbr0 --cipassword rusty --ciuser root --cores 1 --socket 1 --onboot 1
+$ qm importdisk 8000 focal-server-cloudimg-arm64.img local
+$ qm set 8000 --scsihw virtio-scsi-pci --scsi0 local:8000/vm-8000-disk-0.raw
+$ qm resize 8000 scsi0 +5G
+$ qm set 8000 --ide2 local:cloudinit
+$ qm set 8000 --boot c --bootdisk scsi0
