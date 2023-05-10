@@ -1,0 +1,27 @@
+Install OpenVPN Client on your system (Windows to connect to the VPN)
+https://openvpn.net/client-connect-vpn-for-windows/
+
+Download Script
+$ wget https://raw.githubusercontent.com/Angristan/openvpn-install/master/openvpn-install.sh -O debian-11-vpn-server.sh
+
+Change Permission
+$ chmod -v +x debian-11-vpn-server.sh
+
+Find your public ip (don't worry it will already showup in the script when you install)
+$ ip a
+
+$ sudo ./debian-11-vpn-server.sh
+
+    * Public IP Address
+    * IPV6 = n
+    * Default = 1
+    * UDP = 1
+    * AdGuard DNS = 11
+    * Enable Compression = n
+    * Custom. Encryption Setting = n
+    * Client Name: just-a-user-name
+
+Find the user-file location you created with upper command
+$ sudo find / -iname "*.ovpn" -ls
+
+Download The File by any mean and import it in VPN to use it.
