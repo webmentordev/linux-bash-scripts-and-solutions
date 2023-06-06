@@ -20,7 +20,8 @@ clear while : do
   -server.seed 454545 \
   -server.worldsize 4000 \
   -rcon.web 1 \
-  -server.saveinterval 300 \-server.globalchat true \
+  -server.saveinterval 300 \
+  -server.globalchat true \
   -server.description "Description Here" \
   -server.headerimage "https://rustyuranium.online/background.jpg" \
   -server.url "https://rustyuranium.online"
