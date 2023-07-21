@@ -1,0 +1,41 @@
+Change MYSQL Default Authentication type (Caching_sha2_password is default)
+$ nano /etc/mysql/my.cnf
+
+# for mysql_native_password
+[mysqld]
+default-authentication-plugin=mysql_native_password
+
+# for caching_sha2_password
+[mysqld]
+default-authentication-plugin=caching_sha2_password
+
+
+To check if you have done it right
+$ sudo mysql 
+SHOW VARIABLES LIKE 'default_authentication_plugin';
+
+==========================================
+Caching_sha2_password User
+
+$ sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+    Change bind-address to the 0.0.0.0    
+        bind-address = 0.0.0.0
+
+$ sudo mysql
+
+CREATE USER 'user_name'@'%' IDENTIFIED WITH caching_sha2_password BY 'password';
+GRANT ALL PRIVILEGES ON `database_name`.* TO 'user_name'@'%';
+FLUSH PRIVILEGES;
+
+=========================================
+Non caching_sha2_password User
+
+$ sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+    Change bind-address to the 0.0.0.0    
+        bind-address = 0.0.0.0
+
+$ sudo mysql
+
+CREATE USER 'database_name'@'%' IDENTIFIED WITH mysql_native_password BY 'password';
+GRANT ALL PRIVILEGES ON `database_name`.* TO 'user_name'@'%';
+FLUSH PRIVILEGES;
