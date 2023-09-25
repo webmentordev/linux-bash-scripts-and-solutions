@@ -1,0 +1,46 @@
+$ sudo nano /lib/systemd/system/pocketbase.service
+
+# Your Systemd Paste following code
+[Unit]
+Description=Pocketbase Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/pocketbase/
+ExecStart=/root/pocketbase/pocketbase --http=0.0.0.0:8090
+Restart=on-failure
+RestartSec=10s
+[Install]
+WantedBy=multi-user.target
+
+# 2. Start The Service and Link
+$ sudo systemctl daemon-reload
+$ sudo systemctl start pocketbase
+$ sudo systemctl enable pocketbase
+
+
+
+Pocketbase Offical Go Production Documentation
+================================================================
+[Unit]
+Description = Pocketbase Service
+After=network.target
+
+[Service]
+Type           = simple
+User           = root
+Group          = root
+LimitNOFILE    = 4096
+Restart        = always
+RestartSec     = 5s
+StandardOutput = append:/root/pocketbase/errors.log
+StandardError  = append:/root/pocketbase/errors.log
+ExecStart      = /root/pocketbase serve --http=0.0.0.0:8090
+# ExecStart      = /root/pocketbase serve https://mydomain.com
+# ExecStart      = /root/pocketbase serve https://api.mydomain.com
+# ExecStart      = /root/pocketbase serve yourdomain.com
+
+[Install]
+WantedBy = multi-user.target
