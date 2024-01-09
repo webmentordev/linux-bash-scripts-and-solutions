@@ -19,9 +19,17 @@ $ sudo ./debian-11-vpn-server.sh
     * AdGuard DNS = 11
     * Enable Compression = n
     * Custom. Encryption Setting = n
+    * Press Enter to Continue
     * Client Name: just-a-user-name
 
 Find the user-file location you created with upper command
 $ sudo find / -iname "*.ovpn" -ls
 
 Download The File by any mean and import it in VPN to use it.
+
+===========================================
+To create a new user (a new openvpn file)
+$ sudo ./debian-11-vpn-server.sh
+    * What do you want to do? 1
+    * Client Name: just-a-user-name
+    * Do you want to protect the configuration file with a password? 1

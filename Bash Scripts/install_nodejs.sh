@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Download, Install and Update NodeJS 18.15.0
-VER="18.17.1"
+VER="20.9.0"
 sudo apt-get install nodejs curl xz-utils tar wget -y
 wget "https://nodejs.org/dist/v${VER}/node-v${VER}-linux-x64.tar.xz"
 sudo tar -xf node-v${VER}-linux-x64.tar.xz
