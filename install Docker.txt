@@ -1,0 +1,5 @@
+# Source: https://get.docker.com/
+===================================================
+==============Run this script directly=============
+===================================================
+$ curl -fsSL https://get.docker.com -o install-docker.sh && sudo sh install-docker.sh
