@@ -1,0 +1,163 @@
+#!/bin/bash
+
+/home/ahmerdev/files/steam/steamcmd.sh \+force_install_dir /home/ahmerdev/rust_server \+login anonymous \+app_update 258550 \+quit
+
+wget -c https://umod.org/games/rust/download/develop -O UmodUpdate.zip
+unzip -o UmodUpdate.zip
+rm UmodUpdate.zip
+
+clear while : do
+  exec ./RustDedicated -batchmode -nographics \
+  -server.ip 0.0.0.0 \
+  -server.port 29015 \
+  -rcon.ip 0.0.0.0 \
+  -rcon.port 29016 \
+  -rcon.password "password" \
+  -server.maxplayers 250 \
+  -server.hostname "RustyUranium 10x PVE | NPC Raidable Bases | Events" \
+  -server.identity "rustyuranium" \
+  -server.level "Procedural Map" \
+  -server.seed 454545 \
+  -server.worldsize 4000 \
+  -rcon.web 1 \
+  -server.saveinterval 300 \
+  -server.globalchat true \
+  -server.description "Description Here" \
+  -server.headerimage "https://rustyuranium.online/background.jpg" \
+  -server.url "https://rustyuranium.online"
+  echo "\nRestarting server...\n" done
+
+
+
+
+#############################################################################################
+#############################################################################################
+#############################################################################################
+#############################################################################################
+
+#!/bin/sh
+# You may need steam installed on your system and Script is used for rust user in linux system
+echo "Wiping server is 5 seconds"
+sleep 5
+
+TITLE="Rusty Square US 10X|QUAD|PVP|KIT+|NoBPs|BUILD|RAID|Weekly"
+SERVER="/home/rust/server"
+STEAM="/home/rust/Steam/steamcmd.sh"
+PASSWORD="mybestrusty2xpassword"
+WEBSITE="https://rustysquare.com"
+####################
+PORT=28015
+QUERY=28016
+RCON=28017
+APPPORT=28017
+MAX_PLAYERS=120
+####################
+MAP=3500
+SEED=$(shuf -i 0-2147483647 -n 1)
+
+echo "##########################################################"
+echo "Exporting New Starter file with seed and map size e.t.c"
+echo "#########################################################"
+sleep 3
+
+#############################################################################################
+cat > $SERVER/start_server.sh <<EOF
+#!/bin/sh
+while :
+do
+ TERM=roxterm
+ echo "Starting Server..."
+ sleep 3
+
+ $STEAM \+force_install_dir $SERVER \+login anonymous \+app_update 258550 \+quit
+
+ echo "Updating Oxide..."
+ sleep 3
+
+ wget -c --inet4-only https://umod.org/games/rust/download/develop -O UmodUpdate.zip
+ unzip -o UmodUpdate.zip
+ rm UmodUpdate.zip
+
+ echo "Starting.."
+ sleep 3
+ ./RustDedicated -batchmode -nographics -server.ip 0.0.0.0 -server.port $PORT -server.queryport $QUERY -rcon.ip 0.0.0.0 -rcon.port $RCON -rcon.password "$PASSWORD" -server.maxplayers $MAX_PLAYERS -server.level "Procedural Map" -server.seed $SEED -server.worldsize $MAP -server.hostname "$TITLE" -server.identity "my_server_identity" -server.saveinterval 300 -app.publicip 0.0.0.0 -app.port $APPPORT -server.globalchat true -server.url "$WEBSITE"
+ echo "\nRestarting server...\n"
+done
+EOF
+
+#############################################################################################
+echo "Deleting server map file."
+sleep 3
+cd $SERVER/server/my_server_identity && rm procedural*
+
+#############################################################################################
+echo "Server wiped! New Seeds: $SEED and map Size $MAP | Server will come online shortly"
+
+
+
+
+
+
+
+
+#############################################################################################
+#############################################################################################
+#############################################################################################
+#############################################################################################
+#!/bin/bash
+
+# First we will make a directory rust_server in Downloads folder then install Rust server in it
+
+#Chaneg Directory to Downloads
+cd /home/*username*/Downloads
+
+# make Directory
+mkdir rust_server
+
+#Download Rust Server in rust_server directory then auto quit aftr it
+/home/*username*/Downloads/steam/steamcmd.sh \+force_install_dir /home/*username*/Downloads/rust_server/ \+login anonymous \+app_update 258550 \+quit
+
+echo "Server Downloaded Successfully"
+
+
+
+
+#############################################################################################
+#############################################################################################
+#############################################################################################
+#############################################################################################
+#!/bin/bash
+while :
+do
+	echo "Starting Server..."
+    sleep 2
+    /root/Steam/steamcmd.sh \+force_install_dir /home/rust/ \+login anonymous \+app_update 258550 \+quit
+    echo "Updating Oxide..."
+    sleep 2
+    wget -c https://umod.org/games/rust/download/develop -O UmodUpdate.zip
+    unzip -o UmodUpdate.zip
+    rm UmodUpdate.zip
+    echo "Starting.."
+    sleep 2
+    /home/rust/RustDedicated -batchmode -nographics \
+      -server.ip 0.0.0.0 \
+      -server.port 28015 \
+      -server.queryport 28016 \
+      -rcon.ip 0.0.0.0 \
+      -rcon.port 28017 \
+      -rcon.password "pleaseletmein" \
+      -server.maxplayers 250 \
+      -server.hostname "My Rust Server" \
+      -server.identity "rust" \
+      -server.level "Procedural Map" \
+      -server.seed 12345 \
+      -server.worldsize 3500 \
+      -server.saveinterval 150 \
+      -server.globalchat true \
+      -app.publicip 0.0.0.0 \
+      -app.port 28018 \
+      -server.url "https://youtube.com/c/matred97"
+    echo "\nRestarting server...\n"
+	sleep 5
+done
+

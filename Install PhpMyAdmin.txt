@@ -20,3 +20,10 @@ $ mysql -u root -p     //    $ sudo mysql -u root -p
 $ sudo apt install phpmyadmin
 $ sudo phpenmod mbstring
 $ sudo systemctl restart apache2
+
+
+
+===============================
+#!/bin/bash
+sudo apt install phpmyadmin php-mbstring php-zip php-gd php-json php-curl -y
+echo "\nPhpMyAdmin has been installed\n"
