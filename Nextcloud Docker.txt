@@ -1,0 +1,2 @@
+Start Nextcloud in Docker
+$ docker run -d -p 8080:80 --name nextcloud -v nextcloud:/var/www/html nextcloud

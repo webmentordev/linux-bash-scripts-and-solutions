@@ -131,7 +131,7 @@ while :
 do
 	echo "Starting Server..."
     sleep 2
-    /root/Steam/steamcmd.sh \+force_install_dir /home/rust/ \+login anonymous \+app_update 258550 \+quit
+    /root/Steam/steamcmd.sh \+force_install_dir /root/rust/ \+login anonymous \+app_update 258550 \+quit
     echo "Updating Oxide..."
     sleep 2
     wget -c https://umod.org/games/rust/download/develop -O UmodUpdate.zip
