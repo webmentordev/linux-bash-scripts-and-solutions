@@ -1,0 +1,7 @@
+Add current logged in user in docker for non-root user
+(you will not need to use sudo when running docker command)
+==============================================
+$ sudo usermod -aG docker $USER
+
+==============================================
+$USER is the current logged in user (change it to specific username)
