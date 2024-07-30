@@ -1,0 +1,9 @@
+When you install Composer, the Laravel global installer is 
+not installed by default. Even if you install it using the 
+first command mentioned below, it will not work. You need to 
+add the command to the path using the second command mentioned. 
+After that, you will be able to use the Laravel installer.
+
+$ composer global require "laravel/installer"
+$ export PATH="~/.config/composer/vendor/bin:$PATH"
+$ laravel new your_project_name
