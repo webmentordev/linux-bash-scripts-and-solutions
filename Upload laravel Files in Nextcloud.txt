@@ -1,0 +1,33 @@
+* Code is For Laravel
+* Make sure the Nextcloud is running. Docker or Linux
+* Make sure you have Uplods folder exist in files tab of Nextcloud
+
+# .env file
+NEXTCLOUD_BASE_URI=http://localhost:8080/remote.php/webdav/
+NEXTCLOUD_USERNAME=username
+NEXTCLOUD_PASSWORD=password
+
+# config file config/app.php
+'next_url' => env('NEXTCLOUD_BASE_URI', ''),
+'next_username' => env('NEXTCLOUD_USERNAME', ''),
+'next_password' => env('NEXTCLOUD_PASSWORD', ''),
+
+# Route File web.php
+Route::post('/upload', function (Request $request) {
+    if ($request->hasFile('file')) {
+        $file = $request->file('file');
+        $directory = 'uploads/';
+        $filename = $filename = str_replace(' ', '-', rand(9, 99999999).'-'.strtolower($file->getClientOriginalName()));
+        $path = $directory . $filename;
+        $fullPath = env('NEXTCLOUD_BASE_URI') . $path;
+        $client = new Client([
+            'base_uri' => config('app.next_url'),
+            'auth' => [config('app.next_username'), config('app.next_password')],
+        ]);
+        $client->request('PUT', $path, [
+            'body' => fopen($file->getPathname(), 'r'),
+        ]);
+        return response()->json(['message' => 'File uploaded successfully', 'path' => $fullPath]);
+    }
+    return response()->json(['message' => 'No file uploaded'], 400);
+})->name('upload');
