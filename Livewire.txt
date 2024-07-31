@@ -6,8 +6,6 @@ protected $paginationTheme = 'bootstrap';
 protected $paginationTheme = 'tailwindcss';
 
 php artisan livewire:publish --config
-php artisan livewire:publish --assets
-php artisan livewire:publish --pagination
 
 
 module.exports = {
