@@ -1,0 +1,26 @@
+$ sudo apt update && sudo apt upgrade -y
+$ sudo nano /etc/ssh/sshd_config
+(Add these two lines)
+
+DenyUsers app_1 app_2
+AllowUsers root
+
+$ sudo systemctl reload sshd
+
+$ sudo apt install vsftpd -y
+$ sudo nano /etc/vsftpd.conf
+local_enable=YES
+chroot_local_user=YES
+userlist_enable=YES
+userlist_file=/etc/vsftpd.userlist
+userlist_deny=NO
+
+$ sudo nano /etc/vsftpd.userlist
+app_1
+app_2
+
+$ sudo systemctl restart vsftpd
+allow_writeable_chroot=NO
+
+$ sudo chown app_1:app_1 /home/app_1
+$ sudo chmod 700 /home/app_1

@@ -38,3 +38,10 @@ server {
         try_files $uri $uri/ =404;
     }
 }
+
+
+
+# Using different user to server laravel files?
+# Use this to allow nginx to access files
+sudo chown -R app_1:www-data /home/user/folder_with_laravel_files
+sudo chmod -R 755 /home/user/folder_with_laravel_files

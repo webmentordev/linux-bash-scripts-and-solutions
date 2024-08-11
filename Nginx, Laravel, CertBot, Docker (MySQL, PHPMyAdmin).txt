@@ -32,7 +32,7 @@ Disable proxy for each record in cloudflare
 
 Install Nginx, Docker/Compose, CertBot
 ==============================
-$ sudo apt update && sudo apt upgrade -y && sudo apt install curl zip unzip wget -y;
+$ sudo apt update && sudo apt upgrade -y && sudo apt install curl zip unzip wget -y
 $ curl -fsSL https://get.docker.com -o install-docker.sh && sudo sh install-docker.sh
 $ sudo apt-get install certbot python3-certbot-nginx -y
 
@@ -44,7 +44,7 @@ Install Composer & Modules for Laravel
 This is the bash script!
 ==============================
 #!/bin/bash
-sudo apt install php-cli php-zip phpunit php-mysql php-pear php-dev php-xml php-pdo php-curl php-common php-mbstring -y
+sudo apt install php-cli php8.2-fpm php-zip phpunit php-mysql php-pear php-dev php-xml php-pdo php-curl php-common php-mbstring -y
 curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
 HASH=`curl -sS https://composer.github.io/installer.sig`
 php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
@@ -137,14 +137,14 @@ $ docker compose up -d
 Deploy Laravel Code
 ======================================
 1. Create a user like app_1
-$ sudo useradd app_1
+$ sudo adduser app_1
 2. Open SFTP and create a folder name laravel
 3. Zip laravel project 
 4. Copy your laravel code into the laravel folder
 5. SSH into user like ssh app_1@ip-address
 $ cd to laravel
 6. Unzip your laravel prject files
-$ unzip file_here_name.zip
+$ unzip file_name_here.zip
 7. Edit .env file & set the mysql creds like mentioned in the compose.yml file
 $ nano .env
 
@@ -246,10 +246,10 @@ $ sudo systemctl enable app_1_dev
 Let's configure Nginx & Proxy
 Main Domain Nginx (create Domain files)
 =====================================
-$ nano /etc/nginx/sites-available/your_domain.com.conf
+$ nano /etc/nginx/sites-available/howtofixweb.online.conf
 server {
     listen 80;
-    server_name your_domain.com;
+    server_name howtofixweb.online;
 
     location / {
         proxy_pass http://0.0.0.0:8000; 
@@ -266,10 +266,10 @@ server {
 
 PHPMyAdmin Domain Nginx (create Domain files)
 =================================
-$ nano /etc/nginx/sites-available/phpmyadmin.your_domain.com.conf
+$ nano /etc/nginx/sites-available/phpmyadmin.howtofixweb.online.conf
 server {
     listen 80;
-    server_name phpmyadmin.your_domain.com;
+    server_name phpmyadmin.howtofixweb.online;
     location / {
         proxy_pass http://0.0.0.0:8080;
         proxy_http_version 1.1;
@@ -282,13 +282,13 @@ server {
     }
 }
 
-$ sudo ln -s /etc/nginx/sites-available/your_domain.com.conf /etc/nginx/sites-enabled/
-$ sudo ln -s /etc/nginx/sites-available/phpmyadmin.your_domain.com.conf /etc/nginx/sites-enabled/
+$ sudo ln -s /etc/nginx/sites-available/howtofixweb.online.conf /etc/nginx/sites-enabled/
+$ sudo ln -s /etc/nginx/sites-available/phpmyadmin.howtofixweb.online.conf /etc/nginx/sites-enabled/
 (Test nginx syntax)
 $ sudo nginx -t
 $ sudo systemctl restart nginx
-$ sudo certbot --nginx -d your_domain.com
-$ sudo certbot --nginx -d phpmyadmin.your_domain.com
+$ sudo certbot --nginx -d howtofixweb.online
+$ sudo certbot --nginx -d phpmyadmin.howtofixweb.online
 
 
 
@@ -323,7 +323,7 @@ $ sudo ufw enable
 Create swap space, Out of memory protection
 5GB SWAP Space. You can change 5 to increase it
 ==============================================
-$ sudo fallocate -l 1G /swapfile
+$ sudo fallocate -l 5G /swapfile
 $ sudo chmod 600 /swapfile
 $ sudo mkswap /swapfile
 $ sudo swapon /swapfile
