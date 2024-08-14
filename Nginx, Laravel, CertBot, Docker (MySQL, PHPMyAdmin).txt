@@ -32,7 +32,7 @@ Disable proxy for each record in cloudflare
 
 Install Nginx, Docker/Compose, CertBot
 ==============================
-$ sudo apt update && sudo apt upgrade -y && sudo apt install curl zip unzip wget -y
+$ sudo apt update && sudo apt upgrade -y && sudo apt install curl zip unzip wget nginx -y
 $ curl -fsSL https://get.docker.com -o install-docker.sh && sudo sh install-docker.sh
 $ sudo apt-get install certbot python3-certbot-nginx -y
 
@@ -162,6 +162,7 @@ We will create 2 .sh files here
 $ su
 $ cd
 $ cd app_1
+$ nano start.sh
 (Paste this code)
 ****************************************
 #!/bin/bash
@@ -246,10 +247,10 @@ $ sudo systemctl enable app_1_dev
 Let's configure Nginx & Proxy
 Main Domain Nginx (create Domain files)
 =====================================
-$ nano /etc/nginx/sites-available/howtofixweb.online.conf
+$ nano /etc/nginx/sites-available/your-domain.com.conf
 server {
     listen 80;
-    server_name howtofixweb.online;
+    server_name your-domain.com;
 
     location / {
         proxy_pass http://0.0.0.0:8000; 
@@ -266,10 +267,10 @@ server {
 
 PHPMyAdmin Domain Nginx (create Domain files)
 =================================
-$ nano /etc/nginx/sites-available/phpmyadmin.howtofixweb.online.conf
+$ nano /etc/nginx/sites-available/phpmyadmin.your-domain.com.conf
 server {
     listen 80;
-    server_name phpmyadmin.howtofixweb.online;
+    server_name phpmyadmin.your-domain.com;
     location / {
         proxy_pass http://0.0.0.0:8080;
         proxy_http_version 1.1;
@@ -282,13 +283,13 @@ server {
     }
 }
 
-$ sudo ln -s /etc/nginx/sites-available/howtofixweb.online.conf /etc/nginx/sites-enabled/
-$ sudo ln -s /etc/nginx/sites-available/phpmyadmin.howtofixweb.online.conf /etc/nginx/sites-enabled/
+$ sudo ln -s /etc/nginx/sites-available/your-domain.com.conf /etc/nginx/sites-enabled/
+$ sudo ln -s /etc/nginx/sites-available/phpmyadmin.your-domain.com.conf /etc/nginx/sites-enabled/
 (Test nginx syntax)
 $ sudo nginx -t
 $ sudo systemctl restart nginx
-$ sudo certbot --nginx -d howtofixweb.online
-$ sudo certbot --nginx -d phpmyadmin.howtofixweb.online
+$ sudo certbot --nginx -d your-domain.com
+$ sudo certbot --nginx -d phpmyadmin.your-domain.com
 
 
 
