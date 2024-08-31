@@ -57,7 +57,7 @@ Disable proxy for each record in cloudflare
 
 Install Nginx, Docker/Compose, CertBot
 ==============================
-$ sudo apt update && sudo apt upgrade -y && sudo apt install curl zip unzip wget nginx -y
+$ sudo apt update && sudo apt upgrade -y && sudo apt install curl zip unzip wget nginx htop -y
 $ curl -fsSL https://get.docker.com -o install-docker.sh && sudo sh install-docker.sh
 $ sudo apt-get install certbot python3-certbot-nginx -y
 
@@ -327,3 +327,4 @@ $ sudo mkswap /swapfile
 $ sudo swapon /swapfile
 $ sudo cp /etc/fstab /etc/fstab.bak
 $ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+$ htop
