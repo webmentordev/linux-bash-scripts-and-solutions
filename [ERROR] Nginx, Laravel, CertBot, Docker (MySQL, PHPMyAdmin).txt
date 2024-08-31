@@ -1,3 +1,16 @@
+=======================================================
+=======================================================
+This Script is BROKEN YET (use Redis name one)
+=======================================================
+=======================================================
+=======================================================
+
+
+
+
+
+
+
 This file contains how the laravel vps deployment works
 =======================================================
 - We will install Nginx to proxy on the bases of Domain names
@@ -44,7 +57,7 @@ Install Composer & Modules for Laravel
 This is the bash script!
 ==============================
 #!/bin/bash
-sudo apt install php-cli php8.2-fpm php-zip phpunit php-mysql php-pear php-dev php-xml php-pdo php-curl php-common php-mbstring -y
+sudo apt install php-cli php-fpm php-zip phpunit php-mysql php-pear php-dev php-xml php-pdo php-curl php-common php-mbstring -y
 curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
 HASH=`curl -sS https://composer.github.io/installer.sig`
 php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
@@ -207,6 +220,7 @@ WantedBy=multi-user.target
 $ sudo systemctl daemon-reload
 $ sudo systemctl start app_1
 $ sudo systemctl enable app_1
+$ sudo systemctl status app_1
 
 
 
@@ -247,10 +261,10 @@ $ sudo systemctl enable app_1_dev
 Let's configure Nginx & Proxy
 Main Domain Nginx (create Domain files)
 =====================================
-$ nano /etc/nginx/sites-available/your-domain.com.conf
+$ nano /etc/nginx/sites-available/howtofixweb.online.conf
 server {
     listen 80;
-    server_name your-domain.com;
+    server_name howtofixweb.online;
 
     location / {
         proxy_pass http://0.0.0.0:8000; 
@@ -267,10 +281,10 @@ server {
 
 PHPMyAdmin Domain Nginx (create Domain files)
 =================================
-$ nano /etc/nginx/sites-available/phpmyadmin.your-domain.com.conf
+$ nano /etc/nginx/sites-available/phpmyadmin.howtofixweb.online.conf
 server {
     listen 80;
-    server_name phpmyadmin.your-domain.com;
+    server_name phpmyadmin.howtofixweb.online;
     location / {
         proxy_pass http://0.0.0.0:8080;
         proxy_http_version 1.1;
@@ -283,13 +297,13 @@ server {
     }
 }
 
-$ sudo ln -s /etc/nginx/sites-available/your-domain.com.conf /etc/nginx/sites-enabled/
-$ sudo ln -s /etc/nginx/sites-available/phpmyadmin.your-domain.com.conf /etc/nginx/sites-enabled/
+$ sudo ln -s /etc/nginx/sites-available/howtofixweb.online.conf /etc/nginx/sites-enabled/
+$ sudo ln -s /etc/nginx/sites-available/phpmyadmin.howtofixweb.online.conf /etc/nginx/sites-enabled/
 (Test nginx syntax)
 $ sudo nginx -t
 $ sudo systemctl restart nginx
-$ sudo certbot --nginx -d your-domain.com
-$ sudo certbot --nginx -d phpmyadmin.your-domain.com
+$ sudo certbot --nginx -d howtofixweb.online
+$ sudo certbot --nginx -d phpmyadmin.howtofixweb.online
 
 
 
@@ -301,7 +315,8 @@ Otherwise user will not be able to upload files
 Do it as root
 ===========================================
 $ cd /home
-$ chown -R app_1:app_1 app_1
+$ sudo chown -R www-data:www-data /home/app_1/laravel/storage
+$ sudo chown -R www-data:www-data /home/app_1/laravel/bootstrap/cache
 
 
 

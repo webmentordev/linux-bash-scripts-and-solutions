@@ -1,0 +1,329 @@
+This file contains how the laravel vps deployment works
+=======================================================
+- We will install Nginx to proxy on the bases of Domain names
+- Nginx will serve laravel app & proxy phpmyadmin
+- We will install Docker to host phpmyadmin, mysql, Redis & RedisInsight
+- We are going to assume database folder in root to host database
+- Create all laravel files in /var/www/laravel
+- We will install SSL for Larave & PhpMyadmin
+(PHPMyadmin will give SSL warning in login page so ignore it)
+- Anything starts with $ is a command
+
+@@@@@@@@@@
+All Ports
+@@@@@@@@@@
+80   -> Laravel
+8080 -> PhpMyadmin
+3306 -> MySQL
+6379 -> Redis 
+8001 -> RedisInsight
+=======================================================
+
+
+@@@@@@@@@@@@@@@@@@@@
+Login Credientials
+@@@@@@@@@@@@@@@@@@@@
+MYSQL 
+Database: laravel_db
+Username: laravel_db
+Password: kinginthenorth1123
+---------------
+PhpMyadmin
+Server: db
+Username: laravel_db
+Password: kinginthenorth1123
+---------------
+RedisInsight
+Username: default 
+Password: mypassword
+(change mysql, phpmyadmin & redisinsight creds in compose.yml)
+=======================================================
+
+
+
+
+=============================================
+Setup Domain Records
+Disable proxy for each record in cloudflare
+=============================================
+1. Go to your domain registrar
+2. Go to DNS or Records tab
+3. Add 1st A Record as @ to your vps_ip
+4. Add 1st CNAME Record as phpmyadmin to your vps_ip or @
+5. Add 2nd CNAME Record as insight to your vps_ip or @
+
+
+
+
+Install Nginx, Docker/Compose, CertBot
+==============================
+$ sudo apt update && sudo apt upgrade -y && sudo apt install curl zip unzip wget nginx -y
+$ curl -fsSL https://get.docker.com -o install-docker.sh && sudo sh install-docker.sh
+$ sudo apt-get install certbot python3-certbot-nginx -y
+
+
+
+
+
+
+Install Composer & Modules for Laravel
+==============================
+This is the bash script!
+==============================
+#!/bin/bash
+sudo apt install php-cli php-fpm php-zip phpunit php-mysql php-pear php-dev php-xml php-pdo php-curl php-common php-mbstring -y
+curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
+HASH=`curl -sS https://composer.github.io/installer.sig`
+php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+
+
+
+
+
+
+
+Install Nodejs
+==============================
+This is the bash script!
+==============================
+#!/bin/bash
+VER="20.16.0"
+sudo apt-get install nodejs curl xz-utils tar wget -y
+wget "https://nodejs.org/dist/v${VER}/node-v${VER}-linux-x64.tar.xz"
+sudo tar -xf node-v${VER}-linux-x64.tar.xz
+sleep 3
+cd node-v${VER}-linux-x64
+sudo cp -r bin /usr/
+sudo cp -r lib /usr/
+sudo cp -r include /usr/
+sudo cp -r share /usr/
+echo "Node JS Downloaded, Installed and Updated to v${VER}"
+node -v
+cd ..
+sudo rm -r node-v${VER}-linux-x64
+rm node-v${VER}-linux-x64.tar.xz
+
+
+
+
+=========================================================
+Create folder to host our Docker Compose, MySQL, Starter
+Do this in root
+=========================================================
+$ mkdir database
+$ cd database
+
+
+
+
+========================================
+Now create Docker compose file
+========================================
+Create this file in a safe place
+Docker compose file code!
+It will auto download images
+name the file compose.yml (new update)
+Run command is at the end
+========================================
+$ nano compose.yml
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: laravel_db
+      MYSQL_USER: laravel_db
+      MYSQL_PASSWORD: kinginthenorth1123
+      MYSQL_ROOT_PASSWORD: kinginthenorth1123
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db_data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - 8080:80
+  redis-stack-server:
+    image: redis/redis-stack:latest
+    container_name: redis-stack
+    environment:
+      REDIS_ARGS: "--requirepass mypassword"
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - ./redis_data:/data
+    restart: unless-stopped
+volumes:
+  db_data:
+  redis_data:
+
+$ docker compose up -d
+
+
+
+
+
+=====================================
+Create laravel project & configure
+Or upload laravel file using filezilla
+=====================================
+$ cd /var/www/
+$ composer create-project laravel/laravel laravel
+(Or use laravel installer)
+$ sudo chown -R www-data:www-data /var/www/laravel/storage
+$ sudo chown -R www-data:www-data /var/www/laravel/bootstrap/cache
+$ cd /var/www/laravel
+$ composer require predis/predis:^2.0
+$ nano .env
+(Change keys to following)
+---------------
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+APP_MAINTENANCE_DRIVER=redis
+APP_MAINTENANCE_STORE=redis
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel_db
+DB_USERNAME=laravel_db
+DB_PASSWORD="kinginthenorth1123"
+SESSION_DRIVER=redis
+QUEUE_CONNECTION=redis
+REDIS_CLIENT=predis
+REDIS_PASSWORD=mypassword
+(If you change creds then change accordingly)
+
+
+
+
+
+
+
+=====================================
+Let's configure Nginx & Proxy
+Main Domain Nginx (create Domain files)
+=====================================
+$ nano /etc/nginx/sites-available/your-domain.com.conf
+server {
+    server_name your-domain.com;
+    root /var/www/laravel/public;
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+    index index.html index.htm index.php;
+    charset utf-8;
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+    error_page 404 /index.php;
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        # (please check your php-fpm version and change it)
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+
+
+
+
+PHPMyAdmin Domain Nginx (create Domain files)
+=================================
+$ nano /etc/nginx/sites-available/phpmyadmin.your-domain.com.conf
+server {
+    listen 80;
+    server_name phpmyadmin.your-domain.com;
+    location / {
+        proxy_pass http://0.0.0.0:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Host $server_name;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+
+
+
+
+
+
+RedisInsight Domain Nginx (create Domain files)
+=================================
+$ nano /etc/nginx/sites-available/insight.your-domain.com.conf
+server {
+    listen 80;
+    server_name insight.your-domain.com;
+    location / {
+        proxy_pass http://0.0.0.0:8001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Host $server_name;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+
+
+
+
+
+$ sudo ln -s /etc/nginx/sites-available/your-domain.com.conf /etc/nginx/sites-enabled/
+$ sudo ln -s /etc/nginx/sites-available/phpmyadmin.your-domain.com.conf /etc/nginx/sites-enabled/
+$ sudo ln -s /etc/nginx/sites-available/insight.your-domain.com.conf /etc/nginx/sites-enabled/
+(Test nginx syntax)
+$ sudo nginx -t
+$ sudo systemctl restart nginx
+$ sudo certbot --nginx -d your-domain.com
+$ sudo certbot --nginx -d phpmyadmin.your-domain.com
+$ sudo certbot --nginx -d insight.your-domain.com
+
+
+
+
+===========================================
+----Optional----
+Configure the firewall (Don't close console)
+===========================================
+$ sudo apt install ufw -y
+$ sudo ufw allow 80
+$ sudo ufw allow 443
+$ sudo ufw allow 22
+$ sudo ufw enable
+
+
+
+
+
+==============================================
+----Optional----
+Create swap space, Out of memory protection
+5GB SWAP Space. You can change 5 to increase it
+==============================================
+$ sudo fallocate -l 5G /swapfile
+$ sudo chmod 600 /swapfile
+$ sudo mkswap /swapfile
+$ sudo swapon /swapfile
+$ sudo cp /etc/fstab /etc/fstab.bak
+$ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
