@@ -9,6 +9,16 @@ This file contains how the laravel vps deployment works
 (PHPMyadmin will give SSL warning in login page so ignore it)
 - Anything starts with $ is a command
 
+
+
+##############################################
+If you run a command and it does not work, like 
+get stuck, that mean you are out of RAM. Create 
+a swap space. Swap space creation commands are 
+mentioned at the bottom.
+##############################################
+
+
 @@@@@@@@@@
 All Ports
 @@@@@@@@@@
@@ -49,8 +59,8 @@ Disable proxy for each record in cloudflare
 1. Go to your domain registrar
 2. Go to DNS or Records tab
 3. Add 1st A Record as @ to your vps_ip
-4. Add 1st CNAME Record as phpmyadmin to your vps_ip or @
-5. Add 2nd CNAME Record as insight to your vps_ip or @
+4. Add 2nd CNAME Record as phpmyadmin to your vps_ip or @
+5. Add 3rd CNAME Record as insight to your vps_ip or @
 
 
 
@@ -70,6 +80,8 @@ Install Composer & Modules for Laravel
 ==============================
 This is the bash script!
 ==============================
+$ nano composer.sh
+
 #!/bin/bash
 sudo apt install php-cli php-fpm php-zip phpunit php-mysql php-pear php-dev php-xml php-pdo php-curl php-common php-mbstring -y
 curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
@@ -77,7 +89,8 @@ HASH=`curl -sS https://composer.github.io/installer.sig`
 php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
 
-
+$ chmod +x composer.sh
+$ ./composer.sh
 
 
 
@@ -88,6 +101,8 @@ Install Nodejs
 ==============================
 This is the bash script!
 ==============================
+$ nano node.sh
+
 #!/bin/bash
 VER="20.16.0"
 sudo apt-get install nodejs curl xz-utils tar wget -y
@@ -105,7 +120,8 @@ cd ..
 sudo rm -r node-v${VER}-linux-x64
 rm node-v${VER}-linux-x64.tar.xz
 
-
+$ chmod +x node.sh
+$ ./node.sh
 
 
 =========================================================
@@ -178,8 +194,18 @@ Create laravel project & configure
 Or upload laravel file using filezilla
 =====================================
 $ cd /var/www/
-$ composer create-project laravel/laravel laravel
-(Or use laravel installer)
+(Upload code Or use laravel installer like below)
+$ composer global require "laravel/installer"
+$ export PATH="~/.config/composer/vendor/bin:$PATH"
+$ laravel new laravel
+  - Laravel Breeze or any option
+  - Blade with AlpineJS or any option
+  - Yes or No, any you want
+  - Pest
+  - No, for Git repository
+  - MySQL
+  - No, don't migrate database yet
+
 $ sudo chown -R www-data:www-data /var/www/laravel/storage
 $ sudo chown -R www-data:www-data /var/www/laravel/bootstrap/cache
 $ cd /var/www/laravel
@@ -190,7 +216,6 @@ $ nano .env
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://your-domain.com
-APP_MAINTENANCE_DRIVER=redis
 APP_MAINTENANCE_STORE=redis
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -200,12 +225,13 @@ DB_USERNAME=laravel_db
 DB_PASSWORD="kinginthenorth1123"
 SESSION_DRIVER=redis
 QUEUE_CONNECTION=redis
+CACHE_STORE=redis
 REDIS_CLIENT=predis
-REDIS_PASSWORD=mypassword
+REDIS_PASSWORD="mypassword"
 (If you change creds then change accordingly)
 
 
-
+$ php artisan migrate
 
 
 
@@ -310,7 +336,8 @@ $ sudo apt install ufw -y
 $ sudo ufw allow 80
 $ sudo ufw allow 443
 $ sudo ufw allow 22
-$ sudo ufw enable
+$ sudo ufw enable    
+(press y then Enter)
 
 
 
