@@ -242,6 +242,7 @@ Main Domain Nginx (create Domain files)
 =====================================
 $ nano /etc/nginx/sites-available/your-domain.com.conf
 server {
+    listen 80;
     server_name your-domain.com;
     root /var/www/laravel/public;
     add_header X-Frame-Options "SAMEORIGIN";
