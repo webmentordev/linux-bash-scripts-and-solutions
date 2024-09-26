@@ -83,7 +83,7 @@ This is the bash script!
 $ nano composer.sh
 
 #!/bin/bash
-sudo apt install php-cli php-fpm php-zip phpunit php-mysql php-pear php-dev php-xml php-pdo php-curl php-common php-mbstring -y
+sudo apt install php-cli php-fpm php-zip php-gd phpunit php-mysql php-pear php-dev php-xml php-pdo php-curl php-common php-mbstring -y
 curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
 HASH=`curl -sS https://composer.github.io/installer.sig`
 php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
@@ -249,7 +249,7 @@ server {
     add_header X-XSS-Protection "1; mode=block";
     add_header X-Content-Type-Options "nosniff";
     index index.html index.htm index.php;
-    client_max_body_size 500M; #Upload large files up to 500MB
+    client_max_body_size 120M; #Upload large files up to 120MB
     charset utf-8;
     location / {
         try_files $uri $uri/ /index.php?$query_string;
@@ -343,7 +343,26 @@ $ sudo ufw enable
 
 
 
+===================================================
+----Optional but you should----
+Increase Upload file size in PHP CLI & FPM
+8.3 is the php version. Change it to your version
+(you have to change Nginx too to upload large files)
+==================================================
+$ nano /etc/php/8.3/cli/php.ini
+upload_max_filesize = 120M # 120Mb File upload 
+post_max_size = 120M # 120Mb File upload
+max_execution_time = 300
+max_input_time = 300
 
+$ nano /etc/php/8.3/fpm/php.ini
+upload_max_filesize = 120M # 120Mb File upload, same as above
+post_max_size = 120M # 120Mb File upload, same as above
+max_execution_time = 300
+max_input_time = 300
+
+$ sudo systemctl restart nginx
+$ sudo systemctl restart php8.3-fpm
 
 ==============================================
 ----Optional----
