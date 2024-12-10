@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#Download, Install and Update NodeJS 20.16.0
-VER="20.16.0"
+#Download, Install and Update NodeJS 22.12.0
+VER="22.12.0"
 sudo apt-get install nodejs curl xz-utils tar wget -y
 wget "https://nodejs.org/dist/v${VER}/node-v${VER}-linux-x64.tar.xz"
 sudo tar -xf node-v${VER}-linux-x64.tar.xz
 sleep 3
-#sudo cp -R node-v20.9.0-linux-x64/{bin,include,lib,share} /usr/
+#sudo cp -R node-v22.12.0-linux-x64/{bin,include,lib,share} /usr/
 cd node-v${VER}-linux-x64
 sudo cp -r bin /usr/
 sudo cp -r lib /usr/

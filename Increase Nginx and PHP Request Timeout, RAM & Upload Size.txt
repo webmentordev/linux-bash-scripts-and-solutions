@@ -1,0 +1,68 @@
+Before you continue, please check your PHP version
+* My PHP version is 8.2 so i will be using that.
+* I will increase Upload size to 120MB
+* I will increase timeout limit to 300 Seconds (5 Minutes)
+* Website specific conf files are in /etc/nginx/sites-available
+* I will increase RAM limit to 512MB
+* I will increase Max files upload in 1 request to 25
+
+=================================================
+Check PHP version
+=================================================
+$ php -v
+
+
+
+=================================================
+NGINX Configuration
+=================================================
+1. Increase Default File upload size/timeout (for all websites)
+$ sudo nano /etc/nginx/nginx.conf
+
+(Copy and Paste the following anywhere in 'http' block)
+client_max_body_size 120M;
+client_body_timeout 300s;
+client_header_timeout 300s;
+send_timeout 300s;
+proxy_read_timeout 300s;
+proxy_connect_timeout 300s;
+proxy_send_timeout 300s;
+fastcgi_connect_timeout 300s;
+fastcgi_send_timeout 300s; 
+fastcgi_read_timeout 300s;
+
+
+2. Increase Request timeout (504 Gateway error fix)
+$ sudo nano /etc/php/8.2/fpm/pool.d/www.conf
+
+(Find the following key, uncomment it then change the value)
+request_terminate_timeout = 300
+
+
+=================================================
+PHP Configuration
+=================================================
+1. PHP CLI version
+$ sudo nano /etc/php/8.2/cli/php.ini
+upload_max_filesize = 120M
+max_file_uploads = 25
+post_max_size = 120M
+max_execution_time = 300
+max_input_time = 300
+memory_limit = 512M
+
+2. PHP FPM version
+$ sudo nano /etc/php/8.2/fpm/php.ini
+upload_max_filesize = 120M
+max_file_uploads = 25
+post_max_size = 120M
+max_execution_time = 300
+max_input_time = 300
+memory_limit = 512M
+
+
+=================================================
+Restart Services
+=================================================
+$ sudo systemctl restart nginx.service
+$ sudo systemctl restart php8.2-fpm.service
