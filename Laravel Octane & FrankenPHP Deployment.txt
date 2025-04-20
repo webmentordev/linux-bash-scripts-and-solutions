@@ -4,8 +4,7 @@
 * Replace domain.com with your actual domain (In Nginx & Certbot command)
 * You can update the octane port to any from 8000 (In Nginx & Systemd)
 * Update /var/www/laravel to your laravel project's location
-* When you make change in the file or naything, restart the service (line 48)
-
+* When you make changes in your project, restart the service (line 46)
 
 
 # Install FrankenPHP
