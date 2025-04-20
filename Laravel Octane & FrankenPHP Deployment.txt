@@ -1,0 +1,109 @@
+=============================================================
+==========================NOTE===============================
+=============================================================
+* Replace domain.com with your actual domain (In Nginx & Certbot command)
+* You can update the octane port to any from 8000 (In Nginx & Systemd)
+* Update /var/www/laravel to your laravel project's location
+* When you make change in the file or naything, restart the service (line 48)
+
+
+
+# Install FrankenPHP
+curl https://frankenphp.dev/install.sh | sh
+sudo mv /root/frankenphp /usr/local/bin/
+
+
+# Install Octane In Laravel
+composer require laravel/octane
+php artisan octane:install --server=frankenphp
+
+
+# Start Laravel Octane Project
+sudo nano /etc/systemd/system/laravel-octane.service
+-------------------------------------------------------------------
+[Unit]
+Description=Laravel Octane Server (FrankenPHP)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/laravel
+ExecStart=/usr/bin/php artisan octane:frankenphp --host=127.0.0.1 --port=8000
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+Environment=APP_ENV=production
+Environment=LOG_CHANNEL=stderr
+
+[Install]
+WantedBy=multi-user.target
+-------------------------------------------------------------------
+sudo systemctl daemon-reload
+sudo systemctl start laravel-octane
+sudo systemctl status laravel-octane
+sudo systemctl restart laravel-octane
+
+
+# Setup Nginx Config
+sudo nano /etc/nginx/sites-available/domain.com
+-------------------------------------------------------------------
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name domain.com;
+    server_tokens off;
+    root /var/www/laravel/public;
+
+    index index.php;
+
+    charset utf-8;
+
+    location /index.php {
+        try_files /not_exists @octane;
+    }
+
+    location / {
+        try_files $uri $uri/ @octane;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    access_log off;
+    error_log  /var/log/nginx/domain.com-error.log error;
+
+    error_page 404 /index.php;
+
+    location @octane {
+        set $suffix "";
+
+        if ($uri = /index.php) {
+            set $suffix ?$query_string;
+        }
+
+        proxy_http_version 1.1;
+        proxy_set_header Host $http_host;
+        proxy_set_header Scheme $scheme;
+        proxy_set_header SERVER_PORT $server_port;
+        proxy_set_header REMOTE_ADDR $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+
+        proxy_pass http://127.0.0.1:8000$suffix;
+    }
+}
+-------------------------------------------------------------------
+sudo ln -s /etc/nginx/sites-available/domain.com /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+
+# Setup SSL Certificate
+sudo certbot --nginx -d domain.com
