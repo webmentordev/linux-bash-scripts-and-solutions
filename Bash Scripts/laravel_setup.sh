@@ -12,10 +12,13 @@ sudo apt update && sudo apt upgrade -y && sudo apt install curl zip unzip wget n
 curl -fsSL https://get.docker.com -o install-docker.sh && sudo sh install-docker.sh
 sudo apt-get install certbot python3-certbot-nginx -y
 
-# Install Composer
-sudo apt install curl gpg gnupg2 software-properties-common ca-certificates apt-transport-https lsb-release -y && add-apt-repository ppa:ondrej/php && sudo apt update -y
-sudo apt install php8.3 -y
-sudo apt install php8.3-{cli,pdo,mysql,zip,gd,mbstring,curl,xml,bcmath,common,dev,pear,fpm} phpunit -y
+# Install Composer & PHP 8.3
+sudo dpkg -l | grep php | tee packages.txt
+sudo apt install apt-transport-https
+sudo curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+sudo apt update
+sudo apt install php8.3-{cli,mysql,zip,gd,mbstring,curl,xml,bcmath,common,dev,fpm} phpunit -y
 curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php
 HASH=`curl -sS https://composer.github.io/installer.sig`
 php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
@@ -56,10 +59,10 @@ services:
 volumes:
   db_data:
 EOF
-docker composer up -d
+docker compose up -d
 
 
-# Create Swap space
+# Create 2GB Swap space
 if swapon --show | grep -q '/swapfile'; then
   echo "Swap already exists at /swapfile"
 else
