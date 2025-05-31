@@ -1,0 +1,51 @@
+# Information for settings
+=================================================================
+* IGNORE LINES like -------------
+* In Step 3, fan:0 & fan:1 you can open Nvidia Setting and see names to replace here
+* In Step 3, replace dpy:1 & dpy:3 with actual name. use this command to see lines
+$ nvidia-settings --query DigitalVibrance
+* You can increase/decrease Fanspeed and DigitalVibrance
+=================================================================
+
+
+# STEP #01 - Create the config file
+$ sudo nano /etc/X11/Xwrapper.config
+(Paste the following in the file)
+-----------------------------------------
+needs_root_rights=yes
+allowed_users=console
+-----------------------------------------
+
+
+# STEP #02 - Restart the PC
+You have to restart the PC to make it work
+
+
+# STEP #03 - Auto Settings set Script
+$ sudo nano /usr/local/bin/nvidia-thermal-settings.sh
+(Paste these in the file)
+-----------------------------------------
+#!/bin/bash
+# Enable fan control & Set fanspeed
+nvidia-settings -a [gpu:0]/GPUFanControlState=1
+nvidia-settings -a [fan:0]/GPUTargetFanSpeed=30
+nvidia-settings -a [fan:1]/GPUTargetFanSpeed=30
+# Set Digital Vibrance
+nvidia-settings -a [dpy:1]/DigitalVibrance=320
+nvidia-settings -a [dpy:3]/DigitalVibrance=320
+-----------------------------------------
+
+
+# STEP #04 - Create auto script starter on startup
+$ mkdir -p ~/.config/autostart
+$ nano ~/.config/autostart/nvidia-settings.desktop
+(Paste the following)
+-----------------------------------------
+[Desktop Entry]
+Type=Application
+Name=NVIDIA Settings
+Exec=nvidia-settings --load-config-only
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+-----------------------------------------
