@@ -1,0 +1,22 @@
+This is for Cosmic Desktop Environment
+
+Step - #01
+Install Emoji Mart from Pop_OS's Shop or store
+
+Step - #02
+Let's bind the key,
+1 - Go to Keyboard settings, 
+2 - Scrolldown to view & Customize Shortcuts then click it
+3 - Scrolldown to the Custom Shortcuts (at the end) then click it
+4. Click +, 
+    * Give it a 'Name' = E.g Emoji 
+    * Now provide Command = flatpak run io.github.vemonet.EmojiMart
+    (Because we used flatpack to install this so we run it from flatpack)
+    * Click 'Set Shortcut..' then Press two buttons to bind to open the emoji selector
+    (E.g windows + . or any other you would like)
+
+Optional 
+------
+Check your Emoji Mart details
+$ flatpak list | grep -i emoji
+Result: Emoji Mart	io.github.vemonet.EmojiMart	0.3.0	stable	user
