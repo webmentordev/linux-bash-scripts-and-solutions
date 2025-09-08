@@ -34,7 +34,7 @@ nvidia-settings -a [fan:1]/GPUTargetFanSpeed=30
 nvidia-settings -a [dpy:1]/DigitalVibrance=320
 nvidia-settings -a [dpy:3]/DigitalVibrance=320
 -----------------------------------------
-
+$ sudo chmod +x /usr/local/bin/nvidia-thermal-settings.sh
 
 # STEP #04 - Create auto script starter on startup
 $ mkdir -p ~/.config/autostart
@@ -44,8 +44,12 @@ $ nano ~/.config/autostart/nvidia-settings.desktop
 [Desktop Entry]
 Type=Application
 Name=NVIDIA Settings
-Exec=nvidia-settings --load-config-only
+Exec=/usr/local/bin/nvidia-thermal-settings.sh
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
 -----------------------------------------
+
+# Step #05 - Test configuration
+$ sudo /usr/local/bin/nvidia-thermal-settings.sh
+(If values are set then it works fine)
