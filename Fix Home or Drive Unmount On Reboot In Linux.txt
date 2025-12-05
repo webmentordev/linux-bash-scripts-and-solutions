@@ -1,0 +1,44 @@
+This script is to fix unmount of drive after every reboot.
+For my same, i had ZFS signature on it that has to be removed to fix it.
+It happened becasue i had installed Proxmox which was using ZFS for my 1TB HDD
+/home is my 1TB HDD so i have to fix that issue
+
+====================================================
+Remove ZFS signatures
+====================================================
+My drive is sda1 but you have to find your's so use
+$ lsblk
+
+$ sudo wipefs /dev/sda1
+$ sudo umount /home
+$ sudo wipefs -t zfs_member -a /dev/sda1
+$ sudo mount /home
+$ df -h /home
+$ ls /home
+
+// Check if signatures are gone
+$ sudo wipefs /dev/sda1
+
+=========================================
+# Verify and Assign a permanent name
+=========================================
+$ lsblk
+$ sudo mount /dev/sda1 /home
+
+//Now find ID of the drive
+$ sudo blkid /dev/sda1
+
+// Place ID in fstab, this is my ID as example
+$ sudo nano /etc/fstab
+
+// in fstab, where you find /home, replace it, so after it should look like this.
+UUID=e3bccfbc-3ca8-4aed-945d-b29930782c49  /home  ext4  defaults,nofail  0  0
+
+$ sudo systemctl daemon-reload
+$ sudo umount /home
+$ sudo mount -a
+$ df -h /home
+
+// Reboot PC with
+$ sudo reboot
+All good.
