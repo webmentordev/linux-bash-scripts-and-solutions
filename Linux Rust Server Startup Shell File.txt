@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Rust Server Startup Script
+# Server files location: /root/rust
+# SteamCMD location: /root/steamcmd
+
+# Server Configuration
+SERVER_DIR="/root/rust"
+STEAMCMD_DIR="/root/steamcmd"
+SERVER_IDENTITY="my_server"
+SERVER_NAME="My Rust Server"
+SERVER_PORT=28015
+QUERY_PORT=28016
+RCON_PORT=28017
+RCON_PASSWORD="ggjjASSHHeme"
+SERVER_MAXPLAYERS=50
+SERVER_WORLDSIZE=3500
+SERVER_SEED=1331288570
+SAVE_INTERVAL=300
+
+# Update server before starting (comment out if you don't want auto-updates)
+echo "Updating Rust server..."
+${STEAMCMD_DIR}/steamcmd.sh +force_install_dir ${SERVER_DIR} +login anonymous +app_update 258550 validate +quit
+
+# Download and install/update Oxide (uMod)
+echo "Downloading latest Oxide/uMod..."
+cd /tmp
+wget -O oxide.zip https://umod.org/games/rust/download/develop
+if [ -f oxide.zip ]; then
+    echo "Installing Oxide/uMod..."
+    unzip -o oxide.zip -d ${SERVER_DIR}
+    echo "Cleaning up..."
+    rm oxide.zip
+    echo "Oxide/uMod installed successfully!"
+else
+    echo "Failed to download Oxide/uMod"
+fi
+
+# Navigate to server directory
+cd ${SERVER_DIR}
+
+# Start the server
+echo "Starting Rust server..."
+./RustDedicated -batchmode \
+    +server.hostname "${SERVER_NAME}" \
+    +server.port ${SERVER_PORT} \
+    +server.queryport ${QUERY_PORT} \
+    +server.identity "${SERVER_IDENTITY}" \
+    +server.maxplayers ${SERVER_MAXPLAYERS} \
+    +server.worldsize ${SERVER_WORLDSIZE} \
+    +server.seed ${SERVER_SEED} \
+    +server.saveinterval ${SAVE_INTERVAL} \
+    +rcon.port ${RCON_PORT} \
+    +rcon.password "${RCON_PASSWORD}" \
+    +rcon.web 1 \
+    -logfile output.log
