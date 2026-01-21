@@ -2,7 +2,7 @@ My Laravel Project is in /var/www/laravel so i will reffer it
 You can change it in the script below if your project exist somewhere else.
 
 * Create Systemd file
-$ nano /etc/systemd/system/laravel-worker.service
+$ nano /etc/systemd/system/laravel-queue.service
 (Copy and paste following in the file, without the line ----)
 --------------------------------------------------------------------------------
 [Unit]
@@ -13,7 +13,8 @@ After=network.target
 User=root
 Group=root
 Restart=always
-ExecStart=/usr/bin/php /var/www/laravel/artisan queue:work --env=production
+RestartSec=10
+ExecStart=/usr/bin/php /var/www/laravel/artisan queue:work --timeout=300 --env=production
 WorkingDirectory=/var/www/laravel
 
 [Install]
@@ -22,8 +23,8 @@ WantedBy=multi-user.target
 
 * Now Enable and start the service
 $ sudo systemctl daemon-reload
-$ sudo systemctl enable laravel-worker
-$ sudo systemctl start laravel-worker
+$ sudo systemctl enable laravel-queue
+$ sudo systemctl start laravel-queue
 
 * Check service status
-$ sudo systemctl status laravel-worker
+$ sudo systemctl status laravel-queue

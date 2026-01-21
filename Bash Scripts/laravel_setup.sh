@@ -62,7 +62,7 @@ EOF
 docker compose up -d
 
 
-# Create 2GB Swap space
+# Create new 2GB Swap space if not exist
 if swapon --show | grep -q '/swapfile'; then
   echo "Swap already exists at /swapfile"
 else
