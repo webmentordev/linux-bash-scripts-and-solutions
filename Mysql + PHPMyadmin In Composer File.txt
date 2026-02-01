@@ -1,0 +1,26 @@
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: laravel_db
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: '#mypassword:123'
+      MYSQL_ROOT_PASSWORD: '#mypassword:123'
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db_data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - 8001:80
+volumes:
+  db_data:
