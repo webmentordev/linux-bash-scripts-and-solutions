@@ -1,5 +1,5 @@
 # Install the client
-sudp apt install wireguard -y
+sudo apt install wireguard -y
 
 # Create directory
 sudo mkdir -p /etc/wireguard
