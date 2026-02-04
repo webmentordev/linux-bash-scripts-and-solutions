@@ -1,12 +1,15 @@
-$ export 'TERM=xterm'
 $ sudo apt install wget -y
-$ wget https://dev.mysql.com/get/mysql-apt-config_0.8.23-1_all.deb
+
+////////////////////////////////////////////////////////////////
+Check Latest MySQL Version here
+https://dev.mysql.com/downloads/repo/apt/
+////////////////////////////////////////////////////////////////
+
+$ wget https://dev.mysql.com/get/mysql-apt-config_0.8.36-1_all.deb
 $ sudo apt install ./mysql-apt-config_*_all.deb
 	Select first MySQL Server & Cluster
-	MySQL-8.0
+		- MySQL-8 (Any LTS Version)
 	Ok
-For Future Configure
-$ sudo dpkg-reconfigure mysql-apt-config
 
 Now Upgrade & Install APT Package
 $ sudo apt update
@@ -22,7 +25,5 @@ $ mysql -u root -p
 	Enter password you set wile installation
 $ sudo systemctl enable --now mysql
 
-
-////////////////////////////////////////////////////////////////
-Check Version here
-https://dev.mysql.com/downloads/repo/apt/
+For Future Configure
+$ sudo dpkg-reconfigure mysql-apt-config

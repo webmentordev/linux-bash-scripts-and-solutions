@@ -1,0 +1,9 @@
+# Install Package
+$ sudo apt install cpufrequtils -y
+# Set CPU to max performance
+$ sudo cpufreq-set -g performance
+
+# Stress test the performance
+$ sudo apt install stress
+$ stress --cpu 16 --timeout 30s
+$ watch -n 1 "cat /proc/cpuinfo | grep 'MHz'"

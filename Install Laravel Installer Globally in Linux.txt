@@ -5,5 +5,9 @@ add the command to the path using the second command mentioned.
 After that, you will be able to use the Laravel installer.
 
 $ composer global require "laravel/installer"
-$ export PATH="~/.config/composer/vendor/bin:$PATH"
+$ nano ~/.bashrc
+> Paste the following command at the end.
+export PATH="~/.config/composer/vendor/bin:$PATH"
+
+$ source ~/.bashrc
 $ laravel new your_project_name

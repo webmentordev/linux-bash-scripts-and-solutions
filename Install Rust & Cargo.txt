@@ -1,7 +1,7 @@
 ====================Installing Rust On Linux==========================
 $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-====================Install Cargo For Creating New Project============
-$ sudo apt install cargo
+====================Load the rust configurations======================
+$ source ~/.bashrc
 ============================Creating New Project=======================
 $ cargo init
 $ cargo new *projectname*

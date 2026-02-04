@@ -30,8 +30,8 @@ User=www-data
 Group=www-data
 WorkingDirectory=/var/www/laravel
 ExecStart=/usr/bin/php artisan octane:frankenphp --host=127.0.0.1 --port=8000
-Restart=always
-RestartSec=3
+Restart=on-failure
+RestartSec=10
 StandardOutput=journal
 StandardError=journal
 Environment=APP_ENV=production
@@ -97,6 +97,7 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
 
+        # Port must match with the laravel's .env crediential
         proxy_pass http://127.0.0.1:8000$suffix;
     }
 }
@@ -104,5 +105,5 @@ server {
 sudo ln -s /etc/nginx/sites-available/domain.com /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 
-# Setup SSL Certificate
+# Setup SSL Certificate (if certBot is installed)
 sudo certbot --nginx -d domain.com
