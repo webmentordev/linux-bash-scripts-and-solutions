@@ -1,0 +1,26 @@
+# Install - sudo apt install php-pgsql php-pdo
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: laravel_db
+      POSTGRES_USER: laravel
+      POSTGRES_PASSWORD: '#mypassword:123'
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db_packages:/var/lib/postgresql
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: always
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - 8001:80
+volumes:
+  db_packages:
