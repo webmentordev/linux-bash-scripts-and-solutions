@@ -1,0 +1,837 @@
+import puppeteer from 'puppeteer';
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = 28015;
+app.use(express.json());
+
+app.get('/health', async (req, res) => {
+    const chromePath = path.join(__dirname, 'chrome-linux64');
+    res.json({
+        success: true,
+        message: 'System is working!',
+        chrome_found: fs.existsSync(chromePath)
+    });
+});
+
+app.post('/hubspot/puppeteer', async (req, res) => {
+    let steps = [];
+    let f2code = null;
+    try {
+        const chromeLinuxPath = path.join(__dirname, 'chrome-linux64')
+        if (!fs.existsSync(chromeLinuxPath)) {
+            return res.status(400).json({
+                error: 'Chrome not found in' + '/chrome-linux64'
+            });
+        }
+        const { url, contact_url, token, company_name, proposal_id, contact_id, hubspot_id, hubspot_email, hubspot_password, email_template, pdf_name, subject, sender_email } = req.body;
+
+        const requiredFields = {
+            url,
+            contact_url,
+            token,
+            company_name,
+            proposal_id,
+            contact_id,
+            hubspot_id,
+            hubspot_email,
+            hubspot_password,
+            email_template,
+            pdf_name,
+            subject,
+            sender_email
+        };
+
+        const missingFields = Object.keys(requiredFields).filter(key => !requiredFields[key]);
+
+        if (missingFields.length > 0) {
+            console.log('Missing fields:', missingFields);
+            return res.status(400).json({
+                error: 'Missing required arguments',
+                missing_fields: missingFields
+            });
+        }
+
+        const browser = await puppeteer.launch({
+            headless: true,
+            executablePath: path.join(chromeLinuxPath, 'chrome'),
+            userDataDir: path.join(__dirname, 'ppt_' + company_name),
+            args: [
+                '--disable-gpu',
+                '--disable-software-rasterizer',
+                '--disable-dev-shm-usage',
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-background-networking',
+                '--disable-default-apps',
+                '--disable-extensions',
+                '--disable-sync',
+                '--disable-translate',
+                '--mute-audio',
+                '--disable-blink-features=AutomationControlled',
+                '--disable-features=IsolateOrigins,site-per-process'
+            ],
+            ignoreDefaultArgs: ['--enable-automation']
+        });
+
+        try {
+            const page = await browser.newPage();
+            await page.evaluateOnNewDocument(() => {
+                Object.defineProperty(navigator, 'webdriver', {
+                    get: () => undefined
+                });
+            });
+            await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.76 Safari/537.36');
+            let timestamp = new Date().toISOString().replace(/:/g, '-');
+
+            const store_url = contact_url;
+
+            await page.setViewport({ width: 1366, height: 786, deviceScaleFactor: 1 });
+            await page.goto(store_url, { waitUntil: "networkidle0", timeout: 30000 });
+
+            const finalUrl = page.url();
+            console.log(finalUrl);
+            if (finalUrl.includes('hubspot.com/login/')) {
+                try {
+                    await page.waitForSelector('input[type="email"]', { visible: true, timeout: 5000 });
+                    await page.type('input[type="email"]', hubspot_email);
+                } catch (e) {
+                    console.log("Email field was not found!");
+                    steps.push("Email field was not found!");
+                }
+
+                try {
+                    await page.waitForSelector('button[type="submit"]:not([disabled])', { visible: true, timeout: 4000 });
+                    await page.click('button[type="submit"]');
+                } catch (e) {
+                    console.log("Button was not found!");
+                    steps.push("Button was not found!");
+                }
+
+                try {
+                    await page.waitForSelector('[data-test-id="password-login-accordion"]', { visible: true, timeout: 4000 });
+                    await page.click('[data-test-id="password-login-accordion"]');
+                } catch (e) {
+                    console.log("Password field was not found!");
+                    steps.push("Password field was not found!");
+                }
+
+                try {
+                    const selectors = ['label:contains("Remember me")', 'input[type="checkbox"]'];
+                    for (const selector of selectors) {
+                        try {
+                            await page.waitForSelector(selector, { visible: true, timeout: 6000 });
+                            await page.click(selector);
+                            break;
+                        } catch (e) { continue; }
+                    }
+                } catch (e) { steps.push("Remember me was not found"); }
+
+                try {
+                    await page.waitForSelector('input[type="password"]', { visible: true, timeout: 6000 });
+                    await page.type('input[type="password"]', hubspot_password);
+                } catch (e) { steps.push("Password field was not found!"); }
+
+                try {
+                    await page.waitForSelector('button[type="submit"]:not([disabled])', { visible: true, timeout: 6000 });
+                    await page.click('button[type="submit"]');
+                } catch (e) { steps.push("Login submit button was not found!"); }
+
+                await new Promise(resolve => setTimeout(resolve, 6000));
+
+                // Save HTML
+                // const html = await page.content();
+                // const htmlPath = `page-${timestamp}-1.html`;
+                // await fs.promises.writeFile(htmlPath, html, 'utf8');
+                // Save HTML
+
+                const elementExists = await page.evaluate(() => {
+                    const elements = document.querySelectorAll('i18n-string');
+                    return Array.from(elements).some(el =>
+                        el.textContent.includes('Please check your email for your one-time login link')
+                    );
+                });
+
+                if (elementExists) {
+                    await request_login(url, proposal_id, token);
+                    let requestResult = await request_status(url, token);
+                    if (!requestResult) {
+                        // Take Screenshot
+                        await takeScreenshot(page);
+                        await page.close();
+                        await browser.close();
+                        res.status(500).json({
+                            success: false,
+                            steps: steps,
+                            message: "Login URL was not provided on time!"
+                        });
+                    } else {
+                        await page.goto(requestResult, { waitUntil: "networkidle0", timeout: 30000 });
+                    }
+                } else {
+                    steps.push("Email link requirement was not found!");
+
+                    const finalUrl = page.url();
+                    if (finalUrl.includes('hubspot.com/login/')) {
+                        try {
+                            await page.waitForSelector('a', { visible: true, timeout: 6000 });
+                            await request_login_code(url, proposal_id, token);
+                            let requestCode = await request_status_code(url, token);
+                            if (!requestCode) {
+                                // Take Screenshot
+                                await takeScreenshot(page);
+                                await page.close();
+                                await browser.close();
+                                res.status(500).json({
+                                    success: false,
+                                    steps: steps,
+                                    message: "2F Code was not provided on time!"
+                                });
+                            } else {
+                                f2code = requestCode;
+                            }
+
+                            await new Promise(resolve => setTimeout(resolve, 3000));
+
+                            try {
+                                await page.waitForSelector('input#code', { visible: true, timeout: 6000 });
+                                await page.type('input#code', f2code);
+                            } catch (e) { steps.push("2F Input Field!"); }
+
+                            try {
+                                await page.waitForSelector('button[type="submit"]:not([disabled])', { visible: true, timeout: 6000 });
+                                await page.click('button[type="submit"]');
+                            } catch (e) { steps.push("2F Submit button not found!"); }
+
+                            try {
+                                await page.waitForSelector('button[data-2fa-rememberme="true"]', { visible: true, timeout: 6000 });
+                                await page.click('button[data-2fa-rememberme="true"]');
+                            } catch (e) { steps.push("2F remember me not found!"); }
+
+                            try {
+                                await page.waitForNavigation({ waitUntil: "networkidle0", timeout: 8000 });
+                            } catch (e) { steps.push("After 2F Login Navigation failed"); }
+                        } catch (e) {
+                            steps.push("2F was not required!");
+                        }
+                    }
+
+                }
+            }
+
+            try {
+                await page.waitForSelector('[data-key="login.otp.button"]', { visible: true, timeout: 2000 });
+                await page.click('[data-key="login.otp.button"]');
+            } catch (e) {
+                console.log("Otp Button Not found!");
+                steps.push("Password field was not found!");
+            }
+
+            try {
+                await page.waitForNavigation({ waitUntil: "networkidle0", timeout: 8000 });
+            } catch (e) { steps.push("After otp Navigation not processed!"); }
+
+            const checkPage = page.url();
+            if (checkPage.includes('hubspot.com/login/')) {
+                try {
+                    await page.waitForSelector('a', { visible: true, timeout: 6000 });
+                    await request_login_code(url, proposal_id, token);
+                    let requestCode = await request_status_code(url, token);
+                    if (!requestCode) {
+                        // Take Screenshot
+                        await takeScreenshot(page);
+                        await page.close();
+                        await browser.close();
+                        res.status(500).json({
+                            success: false,
+                            steps: steps,
+                            message: "2F Code was not provided on time!"
+                        });
+                    } else {
+                        f2code = requestCode;
+                    }
+
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    try {
+                        await page.waitForSelector('input#code', { visible: true, timeout: 6000 });
+                        await page.type('input#code', f2code);
+                    } catch (e) { steps.push("2F Input Field!"); }
+
+                    try {
+                        await page.waitForSelector('button[type="submit"]:not([disabled])', { visible: true, timeout: 6000 });
+                        await page.click('button[type="submit"]');
+                    } catch (e) { steps.push("2F Submit button not found!"); }
+
+                    try {
+                        await page.waitForSelector('button[data-2fa-rememberme="true"]', { visible: true, timeout: 6000 });
+                        await page.click('button[data-2fa-rememberme="true"]');
+                    } catch (e) { steps.push("2F remember me not found!"); }
+
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+
+                    try {
+                        await page.waitForNavigation({ waitUntil: "networkidle2", timeout: 8000 });
+                    } catch (e) { steps.push("After 2F Login Navigation failed"); }
+
+                } catch (e) {
+                    steps.push("2F was not required!");
+                }
+            }
+
+
+            try {
+                await page.goto(store_url, { waitUntil: "networkidle2", timeout: 50000 });
+            } catch (e) {
+                steps.push("To Email contact page navigation failed!");
+                // Take Screenshot
+                await takeScreenshot(page);
+                await page.close();
+                await browser.close();
+                res.status(500).json({
+                    success: false,
+                    steps: steps,
+                    message: "Contact page navigation failed."
+                });
+            }
+
+            // Select the email address to send from.
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            const dropdownCaret = await page.$('[data-selenium-test="communicator-from-address"] [data-test-id="dropdown-caret"]');
+            if (dropdownCaret) {
+                await dropdownCaret.click();
+                steps.push("Dropdown caret clicked successfully");
+            } else {
+                steps.push("Dropdown caret not found");
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            const email_frames = await page.frames();
+            let emailFound = false;
+            for (const frame of email_frames) {
+                try {
+                    const buttonHandle = await frame.evaluateHandle((sender_email) => {
+                        const buttons = Array.from(document.querySelectorAll('button'));
+                        const button = buttons.find(btn => btn.title && btn.title.includes(sender_email));
+                        return button || null;
+                    }, sender_email);
+
+                    const element = buttonHandle.asElement();
+                    if (element) {
+                        // Take Screenshot
+                        await takeScreenshot(page);
+                        await element.click();
+                        emailFound = true;
+                        steps.push(`Sender email "${sender_email}" found and clicked.`);
+                        break;
+                    }
+                } catch (e) {
+                    steps.push("Sender email not found");
+                }
+            }
+            if (!emailFound) {
+                // Take Screenshot
+                await takeScreenshot(page);
+                await page.close();
+                await browser.close();
+                res.status(500).json({
+                    success: false,
+                    steps: steps,
+                    message: "Sender email not found."
+                });
+            }
+
+
+            // write the subject.
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            try {
+                await page.waitForSelector('input[data-test-id="email-subject-input"]', { visible: true, timeout: 9000 });
+                await page.type(
+                    'input[data-test-id="email-subject-input"]',
+                    subject
+                )
+            } catch (e) {
+
+                // ----------------------------------------------------------
+                console.log(page.url());
+                // Take Screenshot
+                await takeScreenshot(page);
+                // ----------------------------------------------------------
+
+                steps.push("Subject field was not found.");
+                // Take Screenshot
+                await takeScreenshot(page);
+                await page.close();
+                await browser.close();
+                res.status(500).json({
+                    success: false,
+                    steps: steps,
+                    message: "Subject Not found!"
+                });
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 4000));
+
+            const selector = `div[data-test-id="high-risk-customer-retention-prompt-close-button"]`;
+            try {
+                await page.waitForSelector(selector, { visible: true, timeout: 3000 });
+                await page.click(selector);
+                steps.push("Prompt closed successfully");
+            } catch (e) {
+                try {
+                    const frames = await page.frames();
+                    for (const frame of frames) {
+                        try {
+                            await frame.waitForSelector(selector, { visible: true, timeout: 1000 });
+                            await frame.click(selector);
+                            steps.push("Prompt closed successfully (from iframe)");
+                        } catch (frameError) {
+                            continue;
+                        }
+                    }
+                    steps.push("Prompt closer was not found.");
+                } catch (iframeError) {
+                    steps.push("Prompt closer was not found.");
+                }
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            try {
+                await page.waitForSelector('div.ProseMirror p', { visible: true, timeout: 3000 });
+                await page.click('div.ProseMirror p');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                let template = email_template;
+                await page.evaluate(async (processedHtml) => {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = processedHtml;
+                    const plainText = tempDiv.textContent || tempDiv.innerText || '';
+                    try {
+                        const clipboardItem = new ClipboardItem({
+                            'text/html': new Blob([processedHtml], { type: 'text/html' }),
+                            'text/plain': new Blob([plainText], { type: 'text/plain' })
+                        });
+                        await navigator.clipboard.write([clipboardItem]);
+                    } catch (clipboardError) {
+                        await navigator.clipboard.writeText(plainText);
+                    }
+                }, template);
+                await page.keyboard.down('Control');
+                await page.keyboard.press('v');
+                await page.keyboard.up('Control');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            } catch (e) {
+                steps.push("Proposal search field was not found");
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            try {
+                await page.waitForSelector(`div[data-test-id="select-file-dropdown"]`, { visible: true, timeout: 3000 });
+                await page.click(`div[data-test-id="select-file-dropdown"]`);
+            } catch (e) {
+                steps.push("Attachment selector was not found.");
+            }
+
+            try {
+                await page.waitForSelector('i18n-string[data-key="customerDataRte.attachmentOptions.sharedFiles"]', { visible: true, timeout: 4000 });
+                await page.click('i18n-string[data-key="customerDataRte.attachmentOptions.sharedFiles"]');
+            } catch (e) {
+                steps.push("Attachment Choose from File was not found");
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            try {
+                const frames = await page.frames();
+                const fileName = pdf_name;
+                let searchFieldFound = false;
+                console.log("Looking for " + fileName);
+                for (const frame of frames) {
+                    try {
+                        if (await frame.$('[data-layer-for="StyledPanelNavigator"]')) {
+                            await frame.focus('[data-layer-for="StyledPanelNavigator"] input');
+                            await frame.type('[data-layer-for="StyledPanelNavigator"] input', fileName.replace(".pdf", ""));
+                            searchFieldFound = true;
+                            steps.push("Attachment search field found and populated.");
+                            break;
+                        }
+                    } catch (e) {
+                        console.log(`Frame search field check failed: ${e.message}`);
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+                if (!searchFieldFound) {
+                    steps.push("Attachment search field was not found in any frame.");
+                    // Take Screenshot
+                    await takeScreenshot(page);
+                    await page.close();
+                    await browser.close();
+                    return res.status(500).json({
+                        success: false,
+                        steps: steps,
+                        message: "Attachment search field not found after checking all frames, try resending"
+                    });
+                }
+                await new Promise(resolve => setTimeout(resolve, 4000));
+
+                let tries = 0;
+                while (tries < 2) {
+                    tries++;
+                    const newFrames = await page.frames();
+                    let imageFound = false;
+                    for (const frame of newFrames) {
+                        try {
+                            const spanHandle = await frame.evaluateHandle((fileName) => {
+                                const spans = Array.from(document.querySelectorAll('span'));
+                                return spans.find(span => span.textContent.includes(fileName));
+                            }, fileName);
+
+                            const element = spanHandle.asElement();
+                            if (element) {
+                                await element.focus();
+                                await element.click();
+                                imageFound = true;
+                                steps.push(`Attachment file "${fileName}" found and clicked.`);
+                                break;
+                            }
+                        } catch (e) {
+                            console.log(`Frame span check failed: ${e.message}`);
+                        }
+                    }
+                    if (imageFound) {
+                        break;
+                    }
+                    if (tries === 2) {
+                        // Save HTML of main page
+                        const html = await page.content();
+                        const htmlPath = `page-1.html`;
+                        await fs.promises.writeFile(htmlPath, html, 'utf8');
+
+                        // Save HTML of each frame
+                        for (let i = 0; i < newFrames.length; i++) {
+                            try {
+                                const frameHtml = await newFrames[i].content();
+                                const frameHtmlPath = `frame-${i}.html`;
+                                await fs.promises.writeFile(frameHtmlPath, frameHtml, 'utf8');
+                                steps.push(`Saved frame ${i} HTML to ${frameHtmlPath}`);
+                            } catch (e) {
+                                console.log(`Failed to save frame ${i}: ${e.message}`);
+                            }
+                        }
+                        steps.push(`Attachment file "${fileName}" was not found after 2 attempts.`);
+                        // Take Screenshot
+                        await takeScreenshot(page);
+                        await page.close();
+                        await browser.close();
+                        return res.status(500).json({
+                            success: false,
+                            steps: steps,
+                            message: `Attachment file "${fileName}" not found after checking all frames`
+                        });
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+
+                // let tries = 0;
+                // while (tries < 2) {
+                //     tries++;
+                //     const newFrames = await page.frames();
+                //     let imageFound = false;
+                //     for (const frame of newFrames) {
+                //         try {
+                //             const imgHandle = await frame.$(`img[alt="${fileName}"]`);
+                //             if (imgHandle) {
+                //                 await imgHandle.focus();
+                //                 await imgHandle.click();
+                //                 imageFound = true;
+                //                 steps.push(`Attachment file "${fileName}" found and clicked.`);
+                //                 break;
+                //             }
+                //         } catch (e) {
+                //             console.log(`Frame image check failed: ${e.message}`);
+                //         }
+                //     }
+                //     if (imageFound) {
+                //         break;
+                //     }
+                //     if (tries === 2) {
+                //         // Save HTML
+                //         const html = await page.content();
+                //         const htmlPath = `page-1.html`;
+                //         await fs.promises.writeFile(htmlPath, html, 'utf8');
+                //         // Save HTML
+                //         steps.push(`Attachment file "${fileName}" was not found after 2 attempts.`);
+                //         await page.close();
+                //         await browser.close();
+                //         return res.status(500).json({
+                //             success: false,
+                //             steps: steps,
+                //             message: `Attachment file "${fileName}" not found after checking all frames`
+                //         });
+                //     }
+                //     await new Promise(resolve => setTimeout(resolve, 1000));
+                // }
+            } catch (error) {
+                steps.push(`Unexpected error: ${error.message}`);
+                // Take Screenshot
+                await takeScreenshot(page);
+                await page.close();
+                await browser.close();
+                return res.status(500).json({
+                    success: false,
+                    steps: steps,
+                    message: "Unexpected error while searching for attachment: " + error.message
+                });
+            }
+
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                await page.evaluate(() => {
+                    const btn = Array.from(document.querySelectorAll("button"))
+                        .find(el => el.textContent.trim() === "Send");
+                    if (btn) {
+                        btn.click();
+                    };
+                });
+            } catch (e) { }
+
+            await new Promise(resolve => setTimeout(resolve, 6000));
+            await page.close();
+            await browser.close();
+            console.log("Email has been sent!");
+            steps.push("Email email has been sent! No action required.");
+            res.json({
+                success: true,
+                steps: steps,
+                message: 'Hubsport email sent!'
+            });
+        } catch (error) {
+            if (page) {
+                await page.close();
+            }
+            if (browser) {
+                await browser.close();
+            }
+            res.status(500).json({
+                success: false,
+                steps: steps,
+                message: "Error during emailing sequence:" + error.message
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            steps: steps,
+            message: "System ERROR: " + error.message,
+        });
+    }
+});
+
+app.delete('/puppeteer/cleanup/:company_name', async (req, res) => {
+    try {
+        const { company_name } = req.params;
+        if (!company_name || !/^[a-zA-Z0-9_-]+$/.test(company_name)) {
+            return res.status(400).json({
+                error: 'Invalid company name. Only alphanumeric characters, hyphens, and underscores allowed.'
+            });
+        }
+        const userDataDir = path.join(__dirname, `ppt_${company_name}`);
+        if (!fs.existsSync(userDataDir)) {
+            return res.status(404).json({
+                status: "warning",
+                message: "Company cache not found! No further action required.",
+                error: `Company cache data directory not found: ${userDataDir}`
+            });
+        }
+        fs.rmSync(userDataDir, { recursive: true, force: true });
+        res.json({
+            status: "success",
+            message: `Successfully deleted company cache for ${company_name}`,
+            deletedPath: userDataDir
+        });
+    } catch (error) {
+        console.error('Error deleting user data directory:', error);
+        res.status(500).json({
+            error: 'Failed to delete user data directory',
+            details: error.message
+        });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log('Send POST requests to /hubspot/puppeteer');
+    console.log('Send DELETE requests to /puppeteer/userdata/:companyName');
+    console.log('Send GET request to /health');
+});
+
+async function request_login(url, proposal, token) {
+    try {
+        const response = await fetch(`${url}/api/ppt/request/login/${proposal}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            body: JSON.stringify({
+                token: token,
+                message: 'HubSpot requires the login verification URL. Please check your email, copy the link, paste it here, and save it. You have 3 minutes to do this before the HubSpot proposal sending fails. You can resend incase of a failure but be ready next time for what is needed.',
+            }),
+        });
+
+        if (!response.ok) {
+            console.error(`❌ Code API error: ${response.status} ${response.statusText}`);
+            return null;
+        }
+        const result = await response.json();
+        if (!result?.store_id) {
+            console.error("❌ 'code' field not found in API response:", result);
+            return null;
+        }
+        console.log("✅ Code fetched successfully:", result.store_id);
+        return result.store_id;
+    } catch (error) {
+        console.error("❌ Failed to fetch code:", error.message);
+        return null;
+    }
+}
+
+async function request_status(url, token) {
+    try {
+        const maxAttempts = 18;
+        const pollInterval = 10000;
+
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            await new Promise(resolve => setTimeout(resolve, pollInterval));
+            const response = await fetch(`${url}/api/ppt/request/status`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                body: JSON.stringify({ token }),
+            });
+
+            if (!response.ok) {
+                console.error(`❌ Link request Status API Error: ${response.status} ${response.statusText}`);
+                continue;
+            }
+
+            const result = await response.json();
+
+            if (!result?.status) {
+                console.error("❌ 'Link request Status' API response:", result);
+                continue;
+            }
+            if (result.status === 'success') {
+                console.log("Token has been fetched!", result);
+                return result.token;
+            }
+        }
+        console.error("❌ Request timed out after 2 minutes");
+        return null;
+    } catch (error) {
+        console.error("❌ Link request Status error:", error.message);
+        return null;
+    }
+}
+
+
+
+
+async function request_login_code(url, proposal, token) {
+    try {
+        const response = await fetch(`${url}/api/ppt/request/code/${proposal}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            body: JSON.stringify({
+                token: token,
+                message: 'HubSpot requires the 2FA Code. Please check your mobile, and save code here. You have 2 minutes to do this before the HubSpot proposal sending fails. You can resend incase of a failure but be ready next time for what is needed.',
+            }),
+        });
+
+        if (!response.ok) {
+            console.error(`❌ 2F Code API error: ${response.status} ${response.statusText}`);
+            return null;
+        }
+        const result = await response.json();
+        if (!result?.store_id) {
+            console.error("❌ '2F Code' field not found in API response:", result);
+            return null;
+        }
+        console.log("✅ 2F Code fetched successfully:", result.store_id);
+        return result.store_id;
+    } catch (error) {
+        console.error("❌ Failed to fetch 2F Code:", error.message);
+        return null;
+    }
+}
+
+async function request_status_code(url, token) {
+    try {
+        const maxAttempts = 12;
+        const pollInterval = 10000;
+
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            await new Promise(resolve => setTimeout(resolve, pollInterval));
+            const response = await fetch(`${url}/api/ppt/request/status/code`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                body: JSON.stringify({ token }),
+            });
+
+            if (!response.ok) {
+                console.error(`❌ Link request Status API Error: ${response.status} ${response.statusText}`);
+                continue;
+            }
+
+            const result = await response.json();
+
+            if (!result?.status) {
+                console.error("❌ 'Link request Status' API response:", result);
+                continue;
+            }
+            if (result.status === 'success') {
+                console.log("Token has been fetched!", result);
+                return result.token;
+            }
+        }
+        console.error("❌ Request timed out after 2 minutes");
+        return null;
+    } catch (error) {
+        console.error("❌ Link request Status error:", error.message);
+        return null;
+    }
+}
+
+
+async function takeScreenshot(page) {
+    const now = new Date();
+    const d = String(now.getDate()).padStart(2, '0');
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const y = now.getFullYear();
+    let h = now.getHours();
+    const i = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
+    const ampm = h >= 12 ? 'pm' : 'am';
+    h = h % 12;
+    h = h ? h : 12;
+    const hh = String(h).padStart(2, '0');
+    const formattedDate = `${d}-${m}-${y}-${hh}-${i}-${s}-${ampm}`;
+    var screenshotPath = `screenshot-${formattedDate}.png`;
+    await page.screenshot({ path: screenshotPath, fullPage: true });
+}
