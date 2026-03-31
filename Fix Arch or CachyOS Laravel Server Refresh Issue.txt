@@ -1,0 +1,14 @@
+This is a solution for when you start the laravel server (php artisan serve), when you make changes and save
+but the changes are not reflected on the website.
+
+$ sudo nano /etc/php/php.ini
+
+# You have to se these two values to 0 and save
+[opcache]
+opcache.enable=0
+opcache.enable_cli=0
+
+# This will disable OPcache globally which is good for production but not development.
+(I tried .user.ini but it does not work)
+
+# Now simply restart the laravel server.
