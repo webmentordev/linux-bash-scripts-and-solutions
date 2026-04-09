@@ -1,4 +1,8 @@
 Use Last Way
+---
+Have you ever wondered how, when you buy a VPS or server from hosting providers 
+like Hetzner or DigitalOcean, your server becomes available in less than a minute?
+This is how those images are created and instantly installed for you.
 ==============================================================================================
 =============================================Ubuntu===========================================
 ==============================================================================================
