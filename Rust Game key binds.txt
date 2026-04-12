@@ -1,0 +1,12 @@
+# Set volume
+bind 0 "audio.game 0"
+bind 9 "audio.game 1"
+bind 8 "audio.game 0.2"
+
+# Admin plugins
+bind o teleport2marker
+bind p chat.say "/padmin"
+
+# Bind FOV wiht mouse
+bind mouse3 "graphics.fov 60;graphics.lodbias 0"
+bind mouse4 "graphics.fov 90;graphics.lodbias 2"
