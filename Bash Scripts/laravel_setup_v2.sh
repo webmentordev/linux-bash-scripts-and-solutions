@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DOMAIN="" # Domain or subdomain without http E.g theprimehq.com or blog.theprimehq.com
+WWW_DIR="laravel" # Directory name in /var/www/ where laravel project will exist
 MYSQL_PORT=3306
 NODE_VERSION="24.15.0"
 PHP=8.4
@@ -41,6 +43,40 @@ cd ..
 sudo rm -r node-v${NODE_VERSION}-linux-x64
 rm node-v${NODE_VERSION}-linux-x64.tar.xz
 
+# Setup Nginx Config
+cat > /etc/nginx/sites-available/${DOMAIN} << EOF
+server {
+    listen 80;
+    server_name ${DOMAIN};
+    root /var/www/${WWW_DIR}/public;
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+    index index.html index.htm index.php;
+    client_max_body_size 120M;
+    charset utf-8;
+    location / {
+        try_files \$uri \$uri/ /index.php?\$query_string;
+    }
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+    error_page 404 /index.php;
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php${PHP}-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        include fastcgi_params;
+    }
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+EOF
+
+sudo mkdir -p /var/www/${WWW_DIR} && sudo chown -R www-data:www-data /var/www/${WWW_DIR} && sudo chmod -R 755 /var/www/${WWW_DIR}
+sudo ln -s /etc/nginx/sites-available/${DOMAIN} /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+
 # Create Docker Composer & run the file
 touch compose.yml
 cat > compose.yml <<EOF
@@ -81,9 +117,16 @@ else
   echo "Swap file created and activated."
 fi
 
-echo "##############################################"
-echo "##############################################"
-echo "MYSQL Host     = 127.0.0.1:$MYSQL_PORT"
-echo "MYSQL Password = $PASSWORD"
+echo "##################################################################"
+echo "##################################################################"
+echo "##########################IMPORTANT###############################"
+echo "Set domain A record and run this command to setup SSL certificate"
+echo "sudo certbot --nginx -d $DOMAIN"
+echo "##################################################################"
+echo "##################################################################"
+echo "MYSQL Host        = 127.0.0.1:$MYSQL_PORT"
+echo "MYSQL Password    = $PASSWORD"
+echo "DATABSE Name      = laravel_db"
+echo "DATABSE Username  = laravel"
 echo "##############################################"
 echo "##############################################"
