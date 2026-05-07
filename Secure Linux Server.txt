@@ -1,0 +1,70 @@
+--------------------
+Debian based distros
+--------------------
+If you just created a server, faced a brute force attack or intrusion,
+You can use these steps to secure your server.
+
+--------
+Steps to check for intrusion
+--------
+# Check established connection, E.g SSH
+$ lsof -i -n -P | grep ESTABLISHED
+
+# Kill the connection of intruder 
+$ kill -9 <PID>
+
+# See commands history (if intruder ran any command)
+$ history
+
+
+--------
+Secure your server
+--------
+# Install package
+[Server]
+$ sudo apt install fail2ban -y
+$ sudo systemctl enable fail2ban
+$ sudo systemctl start fail2ban
+
+# Create new SSH key for key based ssh login
+[Local machine]
+$ ssh-keygen -t ed25519 -C "your@email.com"
+$ cat ~/.ssh/id_ed25519.pub (copy the conent)
+
+[Server]
+(If this file does not exist, read line 57)
+$ echo "paste-here" >> /root/.ssh/authorized_keys
+$ chmod 700 /root/.ssh
+$ chmod 600 /root/.ssh/authorized_keys
+
+# Configure SSH to disable password login
+$ nano /etc/ssh/sshd_config 
+// Replace following values to these
+==========
+PasswordAuthentication no
+PermitRootLogin prohibit-password
+PubkeyAuthentication yes
+==========
+
+$ systemctl restart ssh
+// Before closing the termianl, test ssh
+[Local machine]
+$ ssh -i ~/.ssh/id_ed25519 root@ip-address
+-----or----
+$ ssh root@ip-address
+
+------------------------------------------------------------------
+# If ssh folder did not exist
+mkdir -p /root/.ssh
+chmod 700 /root/.ssh
+echo "paste-key" > /root/.ssh/authorized_keys
+chmod 600 /root/.ssh/authorized_keys
+
+
+# if you would more options for ssh
+PasswordAuthentication no
+PermitRootLogin prohibit-password
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+MaxAuthTries 3
+LoginGraceTime 30
