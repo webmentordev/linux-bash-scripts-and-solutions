@@ -1,0 +1,23 @@
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9091:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Laravel is not running in docker but on your Host
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD='mypasswordy1122'
+
+volumes:
+  prometheus_data:
+  grafana_data:
