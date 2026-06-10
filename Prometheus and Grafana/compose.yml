@@ -1,22 +1,23 @@
 services:
   prometheus:
     image: prom/prometheus
+    restart: unless-stopped
     ports:
-      - "9091:9090"
-    extra_hosts:
-      - "host.docker.internal:host-gateway" # Laravel is not running in docker but on your Host
+      - "9090:9090" # When connecting prometheus to grafana, use http://prometheus:9090
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
 
   grafana:
     image: grafana/grafana
+    restart: unless-stopped
     ports:
-      - "3001:3000"
+      - "127.0.0.1:3001:3000" # Make it accessible only for Web server E.g nginx, Use reverse proxy
     volumes:
       - grafana_data:/var/lib/grafana
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD='mypasswordy1122'
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD} # This is being read from the .env file
 
 volumes:
   prometheus_data:
