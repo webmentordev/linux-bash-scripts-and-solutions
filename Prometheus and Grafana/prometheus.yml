@@ -10,4 +10,4 @@ scrape_configs:
       - targets:
           - website-1.com
           - website-2.com
-          - website-3.com
+          - website-3.com # Do not use Https with any domain. Simple domain E.g youtube.com, theprimehq.com
