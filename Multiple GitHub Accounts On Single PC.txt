@@ -4,17 +4,27 @@ Keep in mind that this is project-based, so you'll need to run the two configura
 
 Here is what you need to do to make it work.
 * Generate new SSH key in your PC to add into Work GitHub account
-* Configure each pulled project to work credientials (username & email)
+* Configure each pulled project remote repo with username & email
 
 ## New SSH key
 $ ssh-keygen -t ed25519 -C "your-work-address" -f ~/.ssh/id_ed25519_new
 $ nano ~/.ssh/config (create new file if does not exist, paste following)
 
+# ========================
+# Default / personal account
 Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+# Work account (Watch out for username changes in the future)
+Host github.com-your-github-username
     HostName github.com
     User git
     IdentityFile ~/.ssh/id_ed25519_new
     IdentitiesOnly yes
+# ========================
 
 $ chmod 600 ~/.ssh/config
 $ cat ~/.ssh/id_ed25519_new.pub   
@@ -23,7 +33,12 @@ $ cat ~/.ssh/id_ed25519_new.pub
 
 ## Configure (Read 3rd line above)
 cd into your pulled project, and run these two commands
+$ git remote set-url origin git@github.com-ssh-url-of-your-repo.git
 $ git config user.name "your-work-github-username"
-$ git config user.email "your-work-github-email-address"
+$ git config user.email "your-work-github-email"
 
-Good to go!
+## Just in-case if you see wrong account push
+$ git config user.name "your-work-github-username"
+$ git config user.email "your-work-github-email"
+$ git commit --amend --author="work-github-username <work-github-email>" --no-edit
+$ git push --force
