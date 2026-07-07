@@ -11,7 +11,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./db_packages:/var/lib/postgresql
+      - ./db_packages:/var/lib/postgresql/data
   pgadmin:
     image: dpage/pgadmin4:latest
     restart: always
