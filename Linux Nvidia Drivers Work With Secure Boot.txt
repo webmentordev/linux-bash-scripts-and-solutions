@@ -1,0 +1,44 @@
+I did all of this in Linux mint but the idea is same for all.
+This trick is working & tested. I spent two hours doing this. Hopefull it will work for you.
+Please make sure to remove YOUR_NAME with your linux's username.
+# hash are comments.
+$ are cli commands
+------------------
+
+$ sudo apt update
+$ sudo apt install mokutil openssl -y
+
+$ openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -nodes -days 36500 -subj "/CN=YOUR_NAME/"
+# Write password, it will be needed when you restart to enroll the key.
+
+$ sudo mokutil --import MOK.der
+
+# Reboot the system, when you see bluescreen, select 'Enroll key' and follow the steps, you will see your key name. It is simple.
+$ sudo reboot now
+
+# This is the driver version which I have at the time of writing.
+$ sudo apt install nvidia-driver-595-open
+
+$ sudo rm -f /lib/modules/$(uname -r)/updates/dkms/nvidia*
+
+$ sudo apt install --reinstall nvidia-dkms-595-open
+
+# Create a bash script and paste it in
+---
+#!/bin/bash
+cd /lib/modules/$(uname -r)/updates/dkms/
+sudo unzstd -f --rm *.ko.zst
+for mod in nvidia.ko nvidia-modeset.ko nvidia-drm.ko nvidia-uvm.ko nvidia-peermem.ko; do
+  sudo /usr/src/linux-headers-$(uname -r)/scripts/sign-file sha256 ~/MOK.priv ~/MOK.der "$mod"
+done
+---
+# Run the bash file
+
+$ sudo depmod -a
+$ sudo update-initramfs -u
+
+# Restart the system
+$ sudo reboot
+
+# Check working drivers with
+$ nvidia-smi
