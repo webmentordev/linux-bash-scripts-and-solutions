@@ -57,8 +57,6 @@ services:
       - $MYSQL_PORT:3306
     volumes:
       - ./db_data:/var/lib/mysql
-volumes:
-  db_data:
 EOF
 docker compose up -d
 
