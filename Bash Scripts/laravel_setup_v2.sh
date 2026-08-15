@@ -7,6 +7,12 @@ NODE_VERSION="24.15.0"
 PHP=8.4
 PASSWORD=$(openssl rand -base64 24 | tr -dc 'A-Za-z0-9!@#%^&*()_+{}|:<>?' | head -c 16)
 
+# Verify if MYSQL port is not in use
+if netstat -tuln 2>/dev/null | grep -q ":$MYSQL_PORT "; then
+    echo "Error: Port $MYSQL_PORT is already in use."
+    exit 1
+fi
+
 # Create Directory for clean setup
 mkdir setup && cd setup
 
