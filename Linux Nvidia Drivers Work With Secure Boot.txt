@@ -42,3 +42,17 @@ $ sudo reboot
 
 # Check working drivers with
 $ nvidia-smi
+
+
+
+-----------------------
+# Things to do in the future if drivers update and break it.
+You just have to reassign the key. Run this command and reboot
+
+$ sudo mokutil --import /var/lib/shim-signed/mok/MOK.der
+
+$ sudo reboot
+
+During reboot, it will ask again to enroll the key so follow along
+and enroll the key. Just follow the steps, do not select any disk option. 
+It will work.
