@@ -1,0 +1,15 @@
+Docker
+    sudo pacman -Sy docker docker-compose containerd
+    sudo systemctl enable --now docker
+
+NodeJs & Npm
+    sudo pacman -Sy nodejs npm
+
+Git
+    sudo pacman -Sy git
+
+Go Lang:
+    sudo pacman -Sy go go-tools
+
+Rust Lang:
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh

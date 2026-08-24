@@ -1,0 +1,35 @@
+-----------------IMPORTANT--------------------
+* This is for Grub as I tested it on Grub so I don't know about others.
+* Command on line 11 will give you files path for Command 12 & 13. Same for line 15 for 20 & 21
+
+So First Disable the Secure boot so you can go into your system
+
+Open terminal and run these commands.
+$ sudo pacman -S sbctl
+$ sudo sbctl create-keys
+$ sudo sbctl enroll-keys --microsoft
+$ sudo sbctl verify
+$ sudo sbctl sign -s /boot/efi/EFI/cachyos/grubx64.efi
+$ sudo sbctl sign -s /boot/efi/EFI/boot/bootx64.efi
+
+$ ls -la /boot/vmlinuz*
+    -----Output----
+    /boot/vmlinuz-linux-cachyos
+    /boot/vmlinuz-linux-cachyos-lts
+    ---------------
+$ sudo sbctl sign -s /boot/vmlinuz-linux-cachyos
+$ sudo sbctl sign -s /boot/vmlinuz-linux-cachyos-lts
+$ sudo sbctl verify
+    -----Output----
+    ✓ /boot/vmlinuz-linux-cachyos-lts is signed
+    ✓ /boot/efi/EFI/boot/bootx64.efi is signed
+    ✓ /boot/efi/EFI/cachyos/grubx64.efi is signed
+    ✓ /boot/vmlinuz-linux-cachyos is signed
+    ---------------
+If all above are checked that mean you are good.
+
+* Last thing:
+Reboot PC, Enable Secure Boot and set to Custom mode (mine is Gigabyte), save & exit. Command to reboot:
+$ systemctl reboot --firmware-setup
+
+Now your PC will bootup fine
