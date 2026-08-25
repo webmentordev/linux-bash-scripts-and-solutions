@@ -1,0 +1,29 @@
+ahmer is my system's username so change it to yours. This will set GPU fans on single speed
+
+$ nano ~/Downloads/nvidia-thermal-settings.sh
+--------
+#!/bin/bash
+nvidia-settings -a [gpu:0]/GPUFanControlState=1
+nvidia-settings -a [fan:0]/GPUTargetFanSpeed=40
+nvidia-settings -a [fan:1]/GPUTargetFanSpeed=40
+--------
+
+$ echo "ahmer ALL=(ALL) NOPASSWD: /home/ahmer/Downloads/nvidia-thermal-settings.sh" | sudo tee /etc/sudoers.d/nvidia-thermal
+$ sudo chmod 440 /etc/sudoers.d/nvidia-thermal
+$ sudo visudo -c
+
+$ chmod +x ~/Downloads/nvidia-thermal-settings.sh
+
+$ mkdir -p ~/.config/autostart
+$ nano ~/.config/autostart/nvidia-thermal.desktop
+
+-------
+[Desktop Entry]
+Type=Application
+Name=NVIDIA Thermal Settings
+Exec=sudo /home/ahmer/Downloads/nvidia-thermal-settings.sh
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
+------
+
+Restart the PC to test
