@@ -1,0 +1,9 @@
+nano ~/.config/alacritty/alacritty.toml
+
+* Increase window's width
+[window]
+dimensions = { columns = 130, lines = 35 }
+
+* Font size
+[font]
+size = 12.0
