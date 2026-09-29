@@ -1,0 +1,167 @@
+Before we start, Caddy is a better option if you want wildcard *.domain.com & auto SSL on demand.
+---------
+So there are the instruction if you want to support all sub domains wildcards for your domain.
+If you want any kind of sub domain to point/serve to a website/project then you can use this.
+Remember, same main domain with sub domains, not different domains.
+This setting is for laravel/livewire project but concept is same. /var/www/cms/public is my laravel project location
+These sub domains are setup using the A record that points to the IP.
+No cloudflare proxy but your domain can be on cloudflare
+This is effect your fallback domain if you have that on your server.
+
+---------------
+$ sudo nano /etc/nginx/sites-available/default
+(copy and paste the below section & make sure to replace your-domain with the actual domain)
+======================
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name *.your-domain.com;
+    root /var/www/cms/public;
+    index index.html index.htm index.php;
+
+    charset utf-8;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+
+    client_max_body_size 120M;
+
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_min_length 256;
+    gzip_types text/plain text/css text/xml application/json application/javascript application/xml+rss application/atom+xml image/svg+xml font/ttf font/otf font/woff font/woff2;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+
+    location ^~ /livewire {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~* \.(jpg|jpeg|png|gif|ico|webp|avif|svg)$ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+        access_log off;
+        try_files $uri =404;
+    }
+
+    location ~* \.(css|js)$ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+        access_log off;
+        try_files $uri =404;
+    }
+
+    location ~* \.(woff|woff2|ttf|otf|eot)$ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+        access_log off;
+        try_files $uri =404;
+    }
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+
+    server_name *.your-domain.com;
+    root /var/www/cms/public;
+    index index.html index.htm index.php;
+
+    charset utf-8;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+
+    client_max_body_size 120M;
+
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_min_length 256;
+    gzip_types text/plain text/css text/xml application/json application/javascript application/xml+rss application/atom+xml image/svg+xml font/ttf font/otf font/woff font/woff2;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        # Make sure your PHP-FPM version is correct
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+
+    location ^~ /livewire {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~* \.(jpg|jpeg|png|gif|ico|webp|avif|svg)$ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+        access_log off;
+        try_files $uri =404;
+    }
+
+    location ~* \.(css|js)$ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+        access_log off;
+        try_files $uri =404;
+    }
+
+    location ~* \.(woff|woff2|ttf|otf|eot)$ {
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+        access_log off;
+        try_files $uri =404;
+    }
+
+    ssl_certificate /etc/letsencrypt/live/your-domain.com-0001/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-domain.com-0001/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+======================
+
+$ sudo certbot certonly --manual --preferred-challenges dns -d your-domain.com -d '*.your-domain.com'
+
+$ sudo nginx -t
+$ sudo systemctl reload nginx
+
+# Test (A record sub domain must point to the server IP)
+curl -I https://app.your-domain.com/
+curl -I https://124154123123.your-domain.com/
