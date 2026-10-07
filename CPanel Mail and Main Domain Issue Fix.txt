@@ -1,0 +1,17 @@
+I had a domain in cpanel which also had smtp or mail setup on that same domain. The website was also hosted on the Cpanel.
+But I had to move/point that main domain to a VPS IP but keep the mail/SMTP on cpanel.
+
+Here is how i managed it. Take domain 'ghosthost.online':
+When i say main domain that mean without subdomain like www.ghosthost.online, api.ghosthost.online, app.ghosthost.online etc. these are cname or sub domains.
+
+
+* So first, My main domain was pointing to Cpanel's IP address
+    I Changed A record or @ of main domain to point to VPS IP.
+* My mail.ghosthost.online cname was pointing to A record or @ or main domain
+    I Changed it to A record and Pointed it to Cpanel's IP address
+* My MX record was pointing to my main domain
+    I Change it to point to my main domain or @
+
+I did not change anything else.
+
+Give it 1 to 4 hours, it will work (mine took 1-2 minutes)
