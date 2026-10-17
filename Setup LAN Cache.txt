@@ -1,3 +1,6 @@
+I use it to cache my Steam, Ubisoft games while downloading. Power outage can restart downloading
+Which i can not afford at 16MB internet. So, with this cache, cached games download at 1Gbps.
+==============================================================================
 Using Debian Server (If using Virtual Machine then run it In Bridge Network)
 Must use Root Login (other users stop container on server restart IDKY)
 ==============================================================================
