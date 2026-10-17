@@ -1,9 +1,11 @@
-Using Debian 11 Server (If using Virtual Machine then run it In Bridge Network)
-Must use Root Login.
+Using Debian Server (If using Virtual Machine then run it In Bridge Network)
+Must use Root Login (other users stop container on server restart IDKY)
 ==============================================================================
 Install Required Repos
-$ apt install docker.io docker-compose git curl net-tools -y
+$ sudo apt install git curl net-tools -y
 
+Install Docker & Docker compose
+$ curl -fsSL https://get.docker.com -o install-docker.sh && sudo sh install-docker.sh
 ==============================================================================
 Configure Network to Set Static IP address and DNS Server.
 Remember, DNS nameservers can be same as your Router's DNS
@@ -18,14 +20,22 @@ Now, only change primary
     gateway *Your Router Default Gateway*
     dns-nameservers *Use Router Default Gateway as DNS*
 
-My Settings as Example
-    allow-hotplug ens33
-    auto ens33
-    iface ens33 inet static
-        address 192.168.100.180
+My Settings as Example for multiple IPs
+allow-hotplug enp1s0
+iface enp1s0 inet static
+        address 192.168.1.60
         netmask 255.255.255.0
-        gateway 192.168.100.1
-    dns-nameservers 192.168.100.1
+        gateway 192.168.1.1
+        dns-nameservers 8.8.8.8 8.8.4.4
+auto enp1s0:0
+iface enp1s0:0 inet static
+        address 192.168.1.61
+        netmask 255.255.255.0
+
+auto enp1s0:1
+iface enp1s0:1 inet static
+        address 192.168.1.62
+        netmask 255.255.255.0
 
 Configure Static DNS. In file, Only change nameserver as above
 $ nano /etc/resolv.conf
@@ -46,10 +56,12 @@ $ nano .env
 Now Change Some settings In file
     LANCACHE_IP is your ip address you set in /etc/network/interfaces file
     DNS_BIND_IP is again your ip address
-    UPSTREAM_DNS is same as dns-nameservers
+    UPSTREAM_DNS is same as dns-nameservers or 8.8.8.8 8.8.4.4
+    CACHE_DISK_SIZE is set how much space you want for lancache, 400g for 400GB and 1t for 1TB
+
 
 After saving the file run following command. It will download files and start the server.
-$ docker-compose up -d
+$ docker compose up -d
 
 Check Status If Docker is running
 $ docker stats
