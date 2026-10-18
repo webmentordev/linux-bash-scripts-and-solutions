@@ -1,0 +1,114 @@
+This setup only supports receiving emails, not sending. For sending, unblock ports from your hosting provider.
+--------------------------------------------
+* Insall Docker & Docker compose
+* Nginx (this script follows Nginx setup for webmail)
+* Certbot
+--------------------------------------------
+ServerIP: 192.192.192.192 (replace with your server ip)
+Domain: exexex@example.com (replace with your domain)
+--------------------------------------------
+
+## Setup domain records
+A -> mail -> 192.192.192.192
+MX -> @ -> mail@example.com (priority 10)
+TXT -> @ -> v=spf1 -all
+A -> webmail ->	46.224.85.44
+
+## Setup Nginx domain
+$ nano /etc/nginx/sites-available/mail@example.com
+====================
+server {
+    listen 80;
+    listen [::]:80;
+    server_name mail@example.com;
+    root /var/www/html;
+}
+====================
+
+$ nano /etc/nginx/sites-available/webmail@example.com
+====================
+server {
+    listen 80;
+    listen [::]:80;
+    server_name webmail@example.com;
+    client_max_body_size 25M;
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+====================
+$ ln -s /etc/nginx/sites-available/mail@example.com /etc/nginx/sites-enabled/
+$ ln -s /etc/nginx/sites-available/webmail@example.com /etc/nginx/sites-enabled/
+$ nginx -t && systemctl reload nginx
+
+
+## Run Mail server and Rundcube in Docker
+$ nano /opt/mailserver/compose.yaml
+=====================
+services:
+  mailserver:
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    container_name: mailserver
+    hostname: mail@example.com
+    ports:
+      - "25:25"
+      - "993:993"
+    volumes:
+      - ./docker-data/dms/mail-data/:/var/mail/
+      - ./docker-data/dms/mail-state/:/var/mail-state/
+      - ./docker-data/dms/mail-logs/:/var/log/mail/
+      - ./docker-data/dms/config/:/tmp/docker-mailserver/
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - SSL_TYPE=letsencrypt
+      - ONE_DIR=1
+      - ENABLE_CLAMAV=0
+      - ENABLE_POP3=0
+      - ENABLE_FAIL2BAN=1
+      - PERMIT_DOCKER=none
+    networks:
+      default:
+        aliases:
+          - mail@example.com
+    cap_add:
+      - NET_ADMIN
+    restart: always
+
+  roundcube:
+    image: roundcube/roundcubemail:latest-apache
+    container_name: roundcube
+    depends_on:
+      - mailserver
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - ./docker-data/roundcube/db:/var/roundcube/db
+    environment:
+      - ROUNDCUBEMAIL_DB_TYPE=sqlite
+      - ROUNDCUBEMAIL_DEFAULT_HOST=ssl://mail@example.com
+      - ROUNDCUBEMAIL_DEFAULT_PORT=993
+      - ROUNDCUBEMAIL_SMTP_SERVER=
+      - ROUNDCUBEMAIL_SKIN=elastic
+      - ROUNDCUBEMAIL_PLUGINS=archive,zipdownload
+    restart: always
+=====================
+$ cd /opt/mailserver && docker compose up -d
+
+
+## Create emails
+$ docker exec -it mailserver setup email add inbox@example.com
+This will ask you for the custom email password.
+
+# Create aliases for the email
+$ docker exec -it mailserver setup alias add hello@example.com inbox@example.com
+$ docker exec -it mailserver setup alias add admin@example.com inbox@example.com
+
+## Test
+Visit https://webmail@example.com
+Log in with inbox@example.com and your password.
+Send an email from Google or anywhere then you will receive it.
